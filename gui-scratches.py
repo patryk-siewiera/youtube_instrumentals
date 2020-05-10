@@ -1,9 +1,10 @@
 import PySimpleGUI as sg
 
 # size of each row
-row1 = (40, 1)
-row2 = (10, 1)
-row3 = (50, 1)
+row1 = (40, 1)  # keywords
+row2 = (10, 1)  # how much
+row3 = (50, 1)  # method selection
+output_row = (70, 1)  # folder output
 
 # default values
 how_much_combo = [0, 1, 2, 5, 10, 15, 20, 30, 50, 100]
@@ -17,9 +18,9 @@ menu_layout = [['File', ['Settings', 'Exit']],
 
 # settings
 keep_on_top_bool = True
-sg.theme('black')  # theme color
+sg.theme('purple')  # theme color
 program_title = 'Youtube Instrumentals - v 0.1'
-icon_path = "ico.ico"
+icon_path = ""
 
 # for testing
 values_start = {10: '', 11: 0, 12: '1: Without Separation : Whole track'}
@@ -31,20 +32,20 @@ def gui_menu():
 
 
 def gui_output():
-    return [[sg.Text('')], [sg.Text('Output folder'), sg.InputText(size=(20, 1))], [sg.Text('')]]
+    return [[sg.Text('')], [sg.Text('Output folder'), sg.InputText(size=output_row)], [sg.Text('')]]
 
 
 def gui_buttons():
-    return [[sg.Submit(button_text="  Download  "), sg.Cancel(button_text="   Close   "),
-             sg.Button(key="add5", button_text=" + 5 lanes"),
-             sg.Button(key="remove5", button_text="  -  5 lanes  ")]]
+    return [[sg.Button(key="add5", button_text="   + 5    "),
+             sg.Button(key="remove5", button_text="  -  5       ")],
+            [sg.Submit(button_text="         Download       ")]]
 
 
 # TODO now
 def validation(value):
     # validation between pages
     print(len(value) // 3)
-    for i in range(len(value) // 3):
+    for i in range((len(value) // 3) - 1):
         i = i + 1
         # iterator for second table
         current = value[1 + 10 * i]
@@ -59,7 +60,7 @@ def validation(value):
             print("NOT validation: INT for: value", current, 'number: ', i, "type", type(current),
                   "validation: change to == 0")
 
-    for j in range(len(value) // 3):
+    for j in range((len(value) // 3) - 1):
         j = j + 1
         # iterator for third table
         stem_method_iteration = value[2 + 10 * j]
@@ -70,16 +71,14 @@ def validation(value):
             value[2 + 10 * j] = stems_methods[0]
             print("NOT validation: INT for: value", value[2 + 10 * j], 'number: ', j, "type",
                   type(value[2 + 10 * j]), "stem_method_iteration changed to", stems_methods[0])
-
     return value
 
 
 def gui_1line(value1):
     # gui 1 window details
 
-    gui_input_row_1 = [[sg.Text('Top line text', size=(10, 2))],
-                       [sg.Text('Keywords or Link', size=(35, 1), key="11"), sg.Text('How much', size=(10, 1)),
-                        sg.Text('Method 1/2/4/5')],
+    gui_input_row_1 = [[sg.Text('Keywords or Link', size=(35, 1), key="11"), sg.Text('How much', size=(10, 1)),
+                        sg.Text('Method 1 / 2 / 4 / 5 ')],
                        [sg.InputText(str(value1[10]), size=row1, key=10),
                         sg.Combo(how_much_combo,
                                  default_value=value1[11], size=row2, key=11),
@@ -95,21 +94,18 @@ def gui_1line(value1):
     window1.close()
 
     value1 = validation(value1)
+    print('\n_* def gui_1lane():  RETURN == ', value1, '\n')
 
     if event == "add5":
         value1 = gui_5line(value1)
+    if event == "remove5":
+        value1 = gui_1line(value1)
 
-    if event == 'Cancel':
-        print('if -> exit button')
-        exit()
-
-    print('\n_* def gui_1lane():  RETURN == ', value1, '\n')
     return value1
 
 
 def gui_5line(values5):
-    gui_input_row_5 = [[sg.Text('Top line text', size=(10, 2))],
-                       [sg.Text('Keywords or Link', size=(35, 1), key="11"), sg.Text('How much', size=(10, 1)),
+    gui_input_row_5 = [[sg.Text('Keywords or Link', size=(35, 1), key="11"), sg.Text('How much', size=(10, 1)),
                         sg.Text('Method 1/2/4/5')],
                        [sg.InputText(str(values5[10]), size=row1, key=10),
                         sg.Combo(how_much_combo,
@@ -141,6 +137,7 @@ def gui_5line(values5):
     window5.close()
 
     values5 = validation(values5)
+    print('\n_* def gui_5lane():  RETURN == ', values5, '\n')
 
     if event == "remove5":
         values5 = gui_1line(values5)
@@ -148,17 +145,11 @@ def gui_5line(values5):
     if event == "add5":
         values5 = gui_10line(values5)
 
-    if event == 'Cancel':
-        print('if -> exit button')
-        exit()
-
-    print('\n_* def gui_5lane():  RETURN == ', values5, '\n')
     return values5
 
 
 def gui_10line(values10):
     gui_input_row_10 = [[sg.Menu(menu_layout)],
-                        [sg.Text('Top line text', size=(10, 2))],
                         [sg.Text('Keywords or Link', size=(35, 1), key="11"), sg.Text('How much', size=(10, 1)),
                          sg.Text('Method 1/2/4/5')],
                         [sg.InputText(str(values10[10]), size=row1, key=10),
@@ -216,14 +207,14 @@ def gui_10line(values10):
     values10 = validation(values10)
     print('after:', values10)
 
+    print('\n_* def gui_10lane():  RETURN == ', values10, '\n')
+
+    if event == "add5":
+        values10 = gui_10line(values10)
+
     if event == "remove5":
         values10 = gui_5line(values10)
 
-    if event == 'Cancel':
-        print('if -> exit button')
-        exit()
-
-    print('\n_* def gui_10lane():  RETURN == ', values10, '\n')
     return values10
 
 
