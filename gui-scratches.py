@@ -1,20 +1,43 @@
 import PySimpleGUI as sg
 
+# size of each row
 row1 = (40, 1)
 row2 = (10, 1)
 row3 = (50, 1)
 
+# default values
 how_much_combo = [0, 1, 2, 5, 10, 15, 20, 30, 50, 100]
 stems_methods = ['1: Without Separation : Whole track',
                  '2: Stems: Vocal / Instrumental separation',
                  '4: Stems: Vocals / Drums / Bass / Other separation',
                  '5: Stems: Vocals / Drums / Bass / Piano / Other separation']
+menu_layout = [['File', ['Settings', 'Exit']],
+               ['Tools', ['Remove cache youtube-dl']],
+               ["Help", ['Github Page', 'About']]]
 
-values = {10: '', 11: 0, 12: '1: Without Separation : Whole track'}
-
-program_title = 'Youtube Instrumentals - v 0.1'
+# settings
 keep_on_top_bool = True
+sg.theme('black')  # theme color
+program_title = 'Youtube Instrumentals - v 0.1'
 icon_path = "ico.ico"
+
+# for testing
+values_start = {10: '', 11: 0, 12: '1: Without Separation : Whole track'}
+
+
+# static parts of gui
+def gui_menu():
+    return [[sg.Menu(menu_layout)]]
+
+
+def gui_output():
+    return [[sg.Text('')], [sg.Text('Output folder'), sg.InputText(size=(20, 1))], [sg.Text('')]]
+
+
+def gui_buttons():
+    return [[sg.Submit(button_text="  Download  "), sg.Cancel(button_text="   Close   "),
+             sg.Button(key="add5", button_text=" + 5 lanes"),
+             sg.Button(key="remove5", button_text="  -  5 lanes  ")]]
 
 
 # TODO now
@@ -52,20 +75,24 @@ def validation(value):
 
 
 def gui_1line(value1):
-    sg.theme('black')  # theme color
-    layout_1line = [[sg.Text('Top line text', size=(10, 2))],
-                    [sg.Text('Keywords or Link', size=(35, 1), key="11"), sg.Text('How much', size=(10, 1)),
-                     sg.Text('Method 1/2/4/5')],
-                    [sg.InputText(str(value1[10]), size=row1, key=10),
-                     sg.Combo(how_much_combo,
-                              default_value=value1[11], size=row2, key=11),
-                     sg.Combo(stems_methods, size=row3, default_value=value1[12], key=12)],
-                    [sg.Submit(button_text="  Download  "), sg.Cancel(button_text="   Close   "),
-                     sg.Button(key="add5", button_text="  + 5 lanes  ")]]
+    # gui 1 window details
 
-    window = sg.Window(program_title, layout_1line, keep_on_top=keep_on_top_bool, icon=icon_path)
-    event, value1 = window.read()
-    window.close()
+    gui_input_row_1 = [[sg.Text('Top line text', size=(10, 2))],
+                       [sg.Text('Keywords or Link', size=(35, 1), key="11"), sg.Text('How much', size=(10, 1)),
+                        sg.Text('Method 1/2/4/5')],
+                       [sg.InputText(str(value1[10]), size=row1, key=10),
+                        sg.Combo(how_much_combo,
+                                 default_value=value1[11], size=row2, key=11),
+                        sg.Combo(stems_methods, size=row3, default_value=value1[12], key=12)]]
+
+    # initialize specific part
+    window1 = sg.Window(title=program_title,
+                        layout=(gui_menu() + gui_input_row_1 + gui_output() + gui_buttons()),
+                        keep_on_top=keep_on_top_bool,
+                        icon=icon_path)
+
+    event, value1 = window1.read()
+    window1.close()
 
     value1 = validation(value1)
 
@@ -81,35 +108,34 @@ def gui_1line(value1):
 
 
 def gui_5line(values5):
-    sg.theme('black')  # theme color
-    layout_5lines = [[sg.Text('Top line text', size=(10, 2))],
-                     [sg.Text('Keywords or Link', size=(35, 1), key="11"), sg.Text('How much', size=(10, 1)),
-                      sg.Text('Method 1/2/4/5')],
-                     [sg.InputText(str(values5[10]), size=row1, key=10),
-                      sg.Combo(how_much_combo,
-                               default_value=values5[11], size=row2, key=11),
-                      sg.Combo(stems_methods, size=row3, default_value=values5[12], key=12)],
-                     [sg.InputText(size=row1, key=20),
-                      sg.Combo(how_much_combo,
-                               default_value=how_much_combo[0], size=row2, key=21),
-                      sg.Combo(stems_methods, size=row3, default_value=stems_methods[0], key=22)],
-                     [sg.InputText(size=row1, key=30),
-                      sg.Combo(how_much_combo,
-                               default_value=how_much_combo[0], size=row2, key=31),
-                      sg.Combo(stems_methods, size=row3, default_value=stems_methods[0], key=32)],
-                     [sg.InputText(size=row1, key=40),
-                      sg.Combo(how_much_combo,
-                               default_value=how_much_combo[0], size=row2, key=41),
-                      sg.Combo(stems_methods, size=row3, default_value=stems_methods[0], key=42)],
-                     [sg.InputText(size=row1, key=50),
-                      sg.Combo(how_much_combo,
-                               default_value=how_much_combo[0], size=row2, key=51),
-                      sg.Combo(stems_methods, size=row3, default_value=stems_methods[0], key=52)],
-                     [sg.Submit(button_text="  Download  "), sg.Cancel(button_text="   Close   "),
-                      sg.Button(key="add5", button_text=" + 5 lanes"),
-                      sg.Button(key="remove5", button_text="  -  5 lanes  ")]]
+    gui_input_row_5 = [[sg.Text('Top line text', size=(10, 2))],
+                       [sg.Text('Keywords or Link', size=(35, 1), key="11"), sg.Text('How much', size=(10, 1)),
+                        sg.Text('Method 1/2/4/5')],
+                       [sg.InputText(str(values5[10]), size=row1, key=10),
+                        sg.Combo(how_much_combo,
+                                 default_value=values5[11], size=row2, key=11),
+                        sg.Combo(stems_methods, size=row3, default_value=values5[12], key=12)],
+                       [sg.InputText(size=row1, key=20),
+                        sg.Combo(how_much_combo,
+                                 default_value=how_much_combo[0], size=row2, key=21),
+                        sg.Combo(stems_methods, size=row3, default_value=stems_methods[0], key=22)],
+                       [sg.InputText(size=row1, key=30),
+                        sg.Combo(how_much_combo,
+                                 default_value=how_much_combo[0], size=row2, key=31),
+                        sg.Combo(stems_methods, size=row3, default_value=stems_methods[0], key=32)],
+                       [sg.InputText(size=row1, key=40),
+                        sg.Combo(how_much_combo,
+                                 default_value=how_much_combo[0], size=row2, key=41),
+                        sg.Combo(stems_methods, size=row3, default_value=stems_methods[0], key=42)],
+                       [sg.InputText(size=row1, key=50),
+                        sg.Combo(how_much_combo,
+                                 default_value=how_much_combo[0], size=row2, key=51),
+                        sg.Combo(stems_methods, size=row3, default_value=stems_methods[0], key=52)]]
 
-    window5 = sg.Window(program_title, layout_5lines, keep_on_top=keep_on_top_bool, icon=icon_path)
+    window5 = sg.Window(title=program_title,
+                        layout=(gui_menu() + gui_input_row_5 + gui_output() + gui_buttons()),
+                        keep_on_top=keep_on_top_bool,
+                        icon=icon_path)
 
     event, values5 = window5.read()
     window5.close()
@@ -131,56 +157,57 @@ def gui_5line(values5):
 
 
 def gui_10line(values10):
-    sg.theme('black')  # theme color
-    layout_10lines = [[sg.Text('Top line text', size=(10, 2))],
-                      [sg.Text('Keywords or Link', size=(35, 1), key="11"), sg.Text('How much', size=(10, 1)),
-                       sg.Text('Method 1/2/4/5')],
-                      [sg.InputText(str(values10[10]), size=row1, key=10),
-                       sg.Combo(how_much_combo,
-                                default_value=values10[11], size=row2, key=11),
-                       sg.Combo(stems_methods, size=row3, default_value=values10[12], key=12)],
-                      [sg.InputText(size=row1, key=20),
-                       sg.Combo(how_much_combo,
-                                default_value=how_much_combo[0], size=row2, key=21),
-                       sg.Combo(stems_methods, size=row3, default_value=stems_methods[0], key=22)],
-                      [sg.InputText(size=row1, key=30),
-                       sg.Combo(how_much_combo,
-                                default_value=how_much_combo[0], size=row2, key=31),
-                       sg.Combo(stems_methods, size=row3, default_value=stems_methods[0], key=32)],
-                      [sg.InputText(size=row1, key=40),
-                       sg.Combo(how_much_combo,
-                                default_value=how_much_combo[0], size=row2, key=41),
-                       sg.Combo(stems_methods, size=row3, default_value=stems_methods[0], key=42)],
-                      [sg.InputText(size=row1, key=50),
-                       sg.Combo(how_much_combo,
-                                default_value=how_much_combo[0], size=row2, key=51),
-                       sg.Combo(stems_methods, size=row3, default_value=stems_methods[0], key=52)],
+    gui_input_row_10 = [[sg.Menu(menu_layout)],
+                        [sg.Text('Top line text', size=(10, 2))],
+                        [sg.Text('Keywords or Link', size=(35, 1), key="11"), sg.Text('How much', size=(10, 1)),
+                         sg.Text('Method 1/2/4/5')],
+                        [sg.InputText(str(values10[10]), size=row1, key=10),
+                         sg.Combo(how_much_combo,
+                                  default_value=values10[11], size=row2, key=11),
+                         sg.Combo(stems_methods, size=row3, default_value=values10[12], key=12)],
+                        [sg.InputText(size=row1, key=20),
+                         sg.Combo(how_much_combo,
+                                  default_value=how_much_combo[0], size=row2, key=21),
+                         sg.Combo(stems_methods, size=row3, default_value=stems_methods[0], key=22)],
+                        [sg.InputText(size=row1, key=30),
+                         sg.Combo(how_much_combo,
+                                  default_value=how_much_combo[0], size=row2, key=31),
+                         sg.Combo(stems_methods, size=row3, default_value=stems_methods[0], key=32)],
+                        [sg.InputText(size=row1, key=40),
+                         sg.Combo(how_much_combo,
+                                  default_value=how_much_combo[0], size=row2, key=41),
+                         sg.Combo(stems_methods, size=row3, default_value=stems_methods[0], key=42)],
+                        [sg.InputText(size=row1, key=50),
+                         sg.Combo(how_much_combo,
+                                  default_value=how_much_combo[0], size=row2, key=51),
+                         sg.Combo(stems_methods, size=row3, default_value=stems_methods[0], key=52)],
 
-                      [sg.InputText(size=row1, key=60),
-                       sg.Combo(how_much_combo,
-                                default_value=values10[11], size=row2, key=61),
-                       sg.Combo(stems_methods, size=row3, default_value=values10[12], key=62)],
-                      [sg.InputText(size=row1, key=70),
-                       sg.Combo(how_much_combo,
-                                default_value=how_much_combo[0], size=row2, key=71),
-                       sg.Combo(stems_methods, size=row3, default_value=stems_methods[0], key=72)],
-                      [sg.InputText(size=row1, key=80),
-                       sg.Combo(how_much_combo,
-                                default_value=how_much_combo[0], size=row2, key=81),
-                       sg.Combo(stems_methods, size=row3, default_value=stems_methods[0], key=82)],
-                      [sg.InputText(size=row1, key=90),
-                       sg.Combo(how_much_combo,
-                                default_value=how_much_combo[0], size=row2, key=91),
-                       sg.Combo(stems_methods, size=row3, default_value=stems_methods[0], key=92)],
-                      [sg.InputText(size=row1, key=100),
-                       sg.Combo(how_much_combo,
-                                default_value=how_much_combo[0], size=row2, key=101),
-                       sg.Combo(stems_methods, size=row3, default_value=stems_methods[0], key=102)],
+                        [sg.InputText(size=row1, key=60),
+                         sg.Combo(how_much_combo,
+                                  default_value=values10[11], size=row2, key=61),
+                         sg.Combo(stems_methods, size=row3, default_value=values10[12], key=62)],
+                        [sg.InputText(size=row1, key=70),
+                         sg.Combo(how_much_combo,
+                                  default_value=how_much_combo[0], size=row2, key=71),
+                         sg.Combo(stems_methods, size=row3, default_value=stems_methods[0], key=72)],
+                        [sg.InputText(size=row1, key=80),
+                         sg.Combo(how_much_combo,
+                                  default_value=how_much_combo[0], size=row2, key=81),
+                         sg.Combo(stems_methods, size=row3, default_value=stems_methods[0], key=82)],
+                        [sg.InputText(size=row1, key=90),
+                         sg.Combo(how_much_combo,
+                                  default_value=how_much_combo[0], size=row2, key=91),
+                         sg.Combo(stems_methods, size=row3, default_value=stems_methods[0], key=92)],
+                        [sg.InputText(size=row1, key=100),
+                         sg.Combo(how_much_combo,
+                                  default_value=how_much_combo[0], size=row2, key=101),
+                         sg.Combo(stems_methods, size=row3, default_value=stems_methods[0], key=102)]]
 
-                      [sg.Submit(button_text="  Download  "), sg.Cancel(button_text="   Close   "),
-                       sg.Button(key="remove5", button_text="  -  5 lanes  ")]]
-
-    window10 = sg.Window(program_title, layout_10lines, keep_on_top=keep_on_top_bool, icon=icon_path)
+    # initialize specific part
+    window10 = sg.Window(title=program_title,
+                         layout=(gui_menu() + gui_input_row_10 + gui_output() + gui_buttons()),
+                         keep_on_top=keep_on_top_bool,
+                         icon=icon_path)
 
     event, values10 = window10.read()
     window10.close()
@@ -200,7 +227,4 @@ def gui_10line(values10):
     return values10
 
 
-print(gui_1line(values))
-# print(gui_5line(values))
-# print(gui_10line(values))
-#
+print(gui_1line(values_start))
