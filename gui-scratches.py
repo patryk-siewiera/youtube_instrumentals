@@ -1,10 +1,15 @@
+import os
+from json import (load as jsonload, dump as jsondump)
 import PySimpleGUI as sg
+
+# current directory folder
+cwd = "{0}\\!download".format(os.getcwd())
 
 # size of each row
 row1 = (40, 1)  # keywords
 row2 = (10, 1)  # how much
 row3 = (50, 1)  # method selection
-output_row = (70, 1)  # folder output
+output_row = (80, 1)  # folder output
 
 # default values
 how_much_combo = [0, 1, 2, 5, 10, 15, 20, 30, 50, 100]
@@ -38,8 +43,15 @@ def gui_info_row():
              sg.Text('Method 1/2/4/5')]]
 
 
-def gui_output():
-    return [[sg.Text('')], [sg.Text('Output folder'), sg.InputText(size=output_row)], [sg.Text('')]]
+def gui_output_folder():
+    return [[sg.Text('')],
+            [sg.Text('Output folder'), sg.InputText(default_text=cwd, size=output_row, key='cwd'),
+             sg.FolderBrowse()],
+            [sg.Text('')]]
+
+
+def gui_change_settings():
+    return [[sg.Button(key="Change Settings", button_text='Change Settings')]]
 
 
 def gui_buttons():
@@ -50,10 +62,68 @@ def gui_download():
     return [[sg.Submit(button_text="         Download        ")]]
 
 
+SETTINGS_FILE = os.path.join(os.path.dirname(__file__), r'settings_file.cfg')
+DEFAULT_SETTINGS = {'max_users': 10, 'user_data_folder': None, 'theme': sg.theme(), 'zipcode': '94102'}
+# "Map" from the settings dictionary keys to the window's element keys
+SETTINGS_KEYS_TO_ELEMENT_KEYS = {'max_users': '-MAX USERS-', 'user_data_folder': '-USER FOLDER-', 'theme': '-THEME-',
+                                 'zipcode': '-ZIPCODE-'}
+
+
+##################### Load/Save Settings File #####################
+def load_settings(settings_file, default_settings):
+    try:
+        with open(settings_file, 'r') as f:
+            settings = jsonload(f)
+    except Exception as e:
+        sg.popup_quick_message(f'exception {e}', 'No settings file found... will create one for you', keep_on_top=True,
+                               background_color='red', text_color='white')
+        settings = default_settings
+        save_settings(settings_file, settings, None)
+    return settings
+
+
+def save_settings(settings_file, settings, values):
+    if values:  # if there are stuff specified by another window, fill in those values
+        for key in SETTINGS_KEYS_TO_ELEMENT_KEYS:  # update window with the values read from settings file
+            try:
+                settings[key] = values[SETTINGS_KEYS_TO_ELEMENT_KEYS[key]]
+            except Exception as e:
+                print(f'Problem updating settings from window values. Key = {key}')
+
+    with open(settings_file, 'w') as f:
+        jsondump(settings, f, indent=4, sort_keys=True)
+
+    sg.popup('Settings saved')
+
+
+##################### Make a settings window #####################
+def create_settings_window(settings):
+    sg.theme(settings['theme'])
+
+    def TextLabel(text):
+        return sg.Text(text + ':', justification='r', size=(15, 1))
+
+    layout = [[sg.Text('Settings', font='Any 15')],
+              [TextLabel('Max Users'), sg.Input(key='-MAX USERS-')],
+              [TextLabel('User Folder'), sg.Input(key='-USER FOLDER-'), sg.FolderBrowse(target='-USER FOLDER-')],
+              [TextLabel('Zipcode'), sg.Input(key='-ZIPCODE-')],
+              [TextLabel('Theme'), sg.Combo(sg.theme_list(), size=(20, 20), key='-THEME-')],
+              [sg.Button('Save'), sg.Button('Exit')]]
+
+    window = sg.Window('Settings', layout, keep_on_top=True, finalize=True)
+
+    for key in SETTINGS_KEYS_TO_ELEMENT_KEYS:  # update window with the values read from settings file
+        try:
+            window[SETTINGS_KEYS_TO_ELEMENT_KEYS[key]].update(value=settings[key])
+        except Exception as e:
+            print(f'Problem updating PySimpleGUI window from settings. Key = {key}')
+
+    return window
+
+
 # TODO now
 def validation(value):
     # validation between pages
-    print(len(value) // 3)
     for i in range((len(value) // 3) - 1):
         i = i + 1
         # iterator for second table
@@ -63,27 +133,22 @@ def validation(value):
                 current = 0
             else:
                 current = int(current)
-            print("validation: INT for: value", current, 'number: ', i)
         except:
             value[1 + 10 * i] = 0
-            print("NOT validation: INT for: value", current, 'number: ', i, "type", type(current),
-                  "validation: change to == 0")
 
     for j in range((len(value) // 3) - 1):
         j = j + 1
         # iterator for third table
         stem_method_iteration = value[2 + 10 * j]
-        print(stem_method_iteration)
         if stem_method_iteration in stems_methods:
-            print('STEM METHOD')
+            pass
         else:
             value[2 + 10 * j] = stems_methods[0]
-            print("NOT validation: INT for: value", value[2 + 10 * j], 'number: ', j, "type",
-                  type(value[2 + 10 * j]), "stem_method_iteration changed to", stems_methods[0])
     return value
 
 
 def gui_1line(value):
+    window, settings = None, load_settings(SETTINGS_FILE, DEFAULT_SETTINGS)
     # gui 1 window details
 
     gui_input_row_1 = [[sg.InputText(str(value[10]), size=row1, key=10),
@@ -93,16 +158,26 @@ def gui_1line(value):
 
     # initialize specific part
     window1 = sg.Window(title=program_title,
-                        layout=(
-                                gui_menu() + gui_info_row() + gui_input_row_1 + gui_output() + gui_buttons() + gui_download()),
+                        layout=(gui_menu() + gui_info_row() + gui_input_row_1 + gui_output_folder() + gui_buttons()
+                                + gui_download() +gui_change_settings()),
                         keep_on_top=keep_on_top_bool,
                         icon=icon_path)
 
     event, value = window1.read()
     window1.close()
+    value = validation(value)
 
     if event == "add5":
         value = gui_10line(value)
+
+    if event == 'Change Settings':
+        event, values = create_settings_window(settings).read(close=True)
+        if event == 'Save':
+            window1.close()
+            window = None
+            save_settings(SETTINGS_FILE, settings, values)
+
+    window.close()
 
     return value
 
@@ -110,8 +185,8 @@ def gui_1line(value):
 def gui_10line(value):
     gui_input_row_10 = [[sg.InputText(str(value[10]), size=row1, key=10),
                          sg.Combo(how_much_combo,
-                                  size=row2, key=11),
-                         sg.Combo(stems_methods, size=row3, key=12)],
+                                  size=row2, key=11, default_value=value[11]),
+                         sg.Combo(stems_methods, size=row3, key=12, default_value=value[12])],
                         [sg.InputText(size=row1, key=20),
                          sg.Combo(how_much_combo,
                                   default_value=how_much_combo[0], size=row2, key=21),
@@ -128,29 +203,29 @@ def gui_10line(value):
                          sg.Combo(how_much_combo,
                                   default_value=how_much_combo[0], size=row2, key=51),
                          sg.Combo(stems_methods, size=row3, default_value=stems_methods[0], key=52)],
-                        [sg.InputText(size=row1, key=10),
+                        [sg.InputText(size=row1, key=60),
                          sg.Combo(how_much_combo,
-                                  size=row2, key=11),
-                         sg.Combo(stems_methods, size=row3, key=12)],
-                        [sg.InputText(size=row1, key=20),
+                                  default_value=how_much_combo[0], size=row2, key=61),
+                         sg.Combo(stems_methods, size=row3, default_value=stems_methods[0], key=62)],
+                        [sg.InputText(size=row1, key=70),
                          sg.Combo(how_much_combo,
-                                  default_value=how_much_combo[0], size=row2, key=21),
-                         sg.Combo(stems_methods, size=row3, default_value=stems_methods[0], key=22)],
-                        [sg.InputText(size=row1, key=30),
+                                  default_value=how_much_combo[0], size=row2, key=71),
+                         sg.Combo(stems_methods, size=row3, default_value=stems_methods[0], key=72)],
+                        [sg.InputText(size=row1, key=80),
                          sg.Combo(how_much_combo,
-                                  default_value=how_much_combo[0], size=row2, key=31),
-                         sg.Combo(stems_methods, size=row3, default_value=stems_methods[0], key=32)],
-                        [sg.InputText(size=row1, key=40),
+                                  default_value=how_much_combo[0], size=row2, key=81),
+                         sg.Combo(stems_methods, size=row3, default_value=stems_methods[0], key=82)],
+                        [sg.InputText(size=row1, key=90),
                          sg.Combo(how_much_combo,
-                                  default_value=how_much_combo[0], size=row2, key=41),
-                         sg.Combo(stems_methods, size=row3, default_value=stems_methods[0], key=42)],
-                        [sg.InputText(size=row1, key=50),
+                                  default_value=how_much_combo[0], size=row2, key=91),
+                         sg.Combo(stems_methods, size=row3, default_value=stems_methods[0], key=92)],
+                        [sg.InputText(size=row1, key=100),
                          sg.Combo(how_much_combo,
-                                  default_value=how_much_combo[0], size=row2, key=51),
-                         sg.Combo(stems_methods, size=row3, default_value=stems_methods[0], key=52)]]
+                                  default_value=how_much_combo[0], size=row2, key=101),
+                         sg.Combo(stems_methods, size=row3, default_value=stems_methods[0], key=102)]]
 
     window10 = sg.Window(title=program_title,
-                         layout=(gui_menu() + gui_info_row() + gui_input_row_10 + gui_output() + gui_download()),
+                         layout=(gui_menu() + gui_info_row() + gui_input_row_10 + gui_output_folder() + gui_download()),
                          keep_on_top=keep_on_top_bool,
                          icon=icon_path)
 
@@ -162,4 +237,9 @@ def gui_10line(value):
     return value
 
 
-print(gui_1line(values_start))
+
+def main():
+    gui_1line(values_start)
+
+
+main()
