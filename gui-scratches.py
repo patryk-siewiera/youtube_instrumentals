@@ -20,6 +20,21 @@ stems_methods = ['1: Without Separation : Whole track',
 menu_layout = [['File', ['Settings', 'Exit']],
                ['Tools', ['Remove cache youtube-dl']],
                ["Help", ['Github Page', 'About']]]
+bpm_combo = [40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160, 170, 180, 190, 200, 210, 220, 230, 240, 250,
+             260, 270, 280, 290, 300, 310]
+
+keys_combo = ['C / a',
+              'G / e',
+              'D / b',
+              'A / f#',
+              'E / c#',
+              '(B/C#) / g#',
+              '(Gb/F#) / (eb / d#)',
+              '(Db/C#) / bb',
+              'Ab / f',
+              'Eb / c',
+              'Bb / g',
+              'F / d']
 
 theme_combo = [
     'LightGrey3',
@@ -28,7 +43,6 @@ theme_combo = [
     'Black']
 
 # settings
-keep_on_top_bool = True
 program_title = 'Youtube Instrumentals - v 0.1'
 icon_path = ""
 
@@ -72,15 +86,19 @@ def gui_theme_picker():
 
 
 SETTINGS_FILE = os.path.join(os.path.dirname(__file__), r'settings_file.cfg')
-DEFAULT_SETTINGS = {'max_users': 10, 'user_data_folder': None, 'theme': sg.theme(), 'zipcode': '94102',
+DEFAULT_SETTINGS = {'theme': sg.theme(),
                     'keep_on_top_setting': False, 'min_length': 10, 'max_length': 1000,
-                    'min_views': 1, 'max_views': 10000000000}
+                    'min_views': 1, 'max_views': 10000000000, 'key': keys_combo[0], 'key_range': 12,
+                    'bpm': bpm_combo[8], 'bpm_range': 150, 'if_tunebat_using': False, 'geo-bypass': False}
 
 # "Map" from the settings dictionary keys to the window's element keys
-SETTINGS_KEYS_TO_ELEMENT_KEYS = {'max_users': '-MAX USERS-', 'user_data_folder': '-USER FOLDER-', 'theme': '-THEME-',
-                                 'zipcode': '-ZIPCODE-', 'keep_on_top_setting': '-KEEP_ON_TOP_SETTING-',
+SETTINGS_KEYS_TO_ELEMENT_KEYS = {'theme': '-THEME-',
+                                 'keep_on_top_setting': '-KEEP_ON_TOP_SETTING-',
                                  'min_length': '-MIN_LENGTH-', 'max_length': '-MAX_LENGTH-',
-                                 'min_views': '-MIN_VIEWS-', 'max_views': '-MAX_VIEWS-'}
+                                 'min_views': '-MIN_VIEWS-', 'max_views': '-MAX_VIEWS-',
+                                 'key': '-KEY-', 'key_range': '-KEY_RANGE-',
+                                 'bpm': '-BPM-', 'bpm_range': '-BPM_RANGE-',
+                                 'if_tunebat_using': 'IF_TUNEBAT_USING', 'geo-bypass': '-GEO-BYPASS-'}
 
 
 ##################### Load/Save Settings File #####################
@@ -117,22 +135,31 @@ def create_settings_window(settings):
     sg.theme(settings['theme'])
 
     def TextLabel(text):
-        return sg.Text(text + ':', justification='r', size=(15, 1))
+        return sg.Text(text + ':', justification='r', size=(20, 1))
 
     inp_size = (15, 2)
+    cmb_size = (13, 13)
 
     layout = [[sg.Text('Settings', font='Any 15')],
               [sg.CBox('Window Always On Top', key='-KEEP_ON_TOP_SETTING-')],
-              [TextLabel('Theme'), sg.Combo(theme_combo, size=(10, 10), key='-THEME-')],
-              [TextLabel('Max Users'), sg.Input(key='-MAX USERS-', size=inp_size)],
-              [TextLabel('User Folder'), sg.Input(key='-USER FOLDER-', size=inp_size),
-               sg.FolderBrowse(target='-USER FOLDER-')],
-              [sg.Text('Download Preferences', font='Any 15')],
-              [TextLabel('Zipcode'), sg.Input(key='-ZIPCODE-', size=inp_size)],
+              [TextLabel('Theme'), sg.Combo(theme_combo, size=(13, 10), key='-THEME-')],
+              [sg.Text()],
+              [sg.Text('Tunebat Scraping Preferences', font='Any 15')],
+              [sg.CBox('Use TuneBat to specify bpm and key', key='IF_TUNEBAT_USING')],
+              [TextLabel('bpm'), sg.Combo(bpm_combo, key='-BPM-', size=cmb_size), TextLabel('bpm_range'),
+               sg.Input(key='-BPM_RANGE-', size=inp_size)],
+              [TextLabel('key'), sg.Combo(keys_combo, key='-KEY-', size=cmb_size),
+               TextLabel('key_range - circle of fifth'),
+               sg.Input(key='-KEY_RANGE-', size=inp_size)],
+              [sg.Text()],
+              [sg.Text('YouTube Download Preferences', font='Any 15')],
+              [sg.CBox('geo-bypass', key='-GEO-BYPASS-', size=cmb_size)],
               [TextLabel('min_length'), sg.Input(key='-MIN_LENGTH-', size=inp_size), TextLabel('max_length'),
                sg.Input(key='-MAX_LENGTH-', size=inp_size)],
               [TextLabel('min_views'), sg.Input(key='-MIN_VIEWS-', size=inp_size), TextLabel('max_views'),
                sg.Input(key='-MAX_VIEWS-', size=inp_size)],
+              [sg.Text()],
+              [sg.Text('Spleeter Preferences (separation engine)', font='Any 15')],
               [sg.Button('Reset to Defaults')],
               [sg.Button('Save'), sg.Button('Exit')]]
 
@@ -199,11 +226,11 @@ def gui_1line(value, settings):
     return sg.Window(title=program_title,
                      layout=(gui_menu() + gui_info_row() + gui_input_row_1 + gui_output_folder() + gui_buttons()
                              + gui_download() + gui_change_settings()),
-                     keep_on_top=keep_on_top_bool,
+                     keep_on_top=settings['keep_on_top_setting'],
                      icon=icon_path)
 
 
-def gui_10line(value):
+def gui_10line(value, settings):
     gui_input_row_10 = [[sg.InputText(str(value[10]), size=row1, key=10),
                          sg.Combo(how_much_combo,
                                   size=row2, key=11, default_value=value[11]),
@@ -248,7 +275,7 @@ def gui_10line(value):
     window10 = sg.Window(title=program_title,
                          layout=(
                                  gui_menu() + gui_info_row() + gui_input_row_10 + gui_output_folder() + gui_download() + gui_change_settings()),
-                         keep_on_top=keep_on_top_bool,
+                         keep_on_top=settings['keep_on_top_setting'],
                          icon=icon_path)
 
     event, value = window10.read()
@@ -260,7 +287,6 @@ def gui_10line(value):
 
 
 def main():
-
     while True:  # Event Loop
         window, settings = None, load_settings(SETTINGS_FILE, DEFAULT_SETTINGS)
         window = gui_1line(values_start, settings)
