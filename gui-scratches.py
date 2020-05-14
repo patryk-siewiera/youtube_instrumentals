@@ -21,9 +21,14 @@ menu_layout = [['File', ['Settings', 'Exit']],
                ['Tools', ['Remove cache youtube-dl']],
                ["Help", ['Github Page', 'About']]]
 
+theme_combo = [
+    'LightGrey3',
+    'BrownBlue',
+    'DarkGrey4',
+    'Black']
+
 # settings
 keep_on_top_bool = True
-sg.theme('purple')  # theme color
 program_title = 'Youtube Instrumentals - v 0.1'
 icon_path = ""
 
@@ -62,11 +67,18 @@ def gui_download():
     return [[sg.Submit(button_text="         Download        ")]]
 
 
+def gui_theme_picker():
+    return [[sg.Combo(theme_combo)]]
+
+
 SETTINGS_FILE = os.path.join(os.path.dirname(__file__), r'settings_file.cfg')
-DEFAULT_SETTINGS = {'max_users': 10, 'user_data_folder': None, 'theme': sg.theme(), 'zipcode': '94102'}
+DEFAULT_SETTINGS = {'max_users': 10, 'user_data_folder': None, 'theme': sg.theme(), 'zipcode': '94102',
+                    'keep_on_top_setting': False, 'min_length': 10, 'max_length': 1000}
+
 # "Map" from the settings dictionary keys to the window's element keys
 SETTINGS_KEYS_TO_ELEMENT_KEYS = {'max_users': '-MAX USERS-', 'user_data_folder': '-USER FOLDER-', 'theme': '-THEME-',
-                                 'zipcode': '-ZIPCODE-'}
+                                 'zipcode': '-ZIPCODE-', 'keep_on_top_setting': '-KEEP_ON_TOP_SETTING-',
+                                 'min_length': '-MIN_LENGTH-', 'max_length': '-MAX_LENGTH-'}
 
 
 ##################### Load/Save Settings File #####################
@@ -75,8 +87,6 @@ def load_settings(settings_file, default_settings):
         with open(settings_file, 'r') as f:
             settings = jsonload(f)
     except Exception as e:
-        sg.popup_quick_message(f'exception {e}', 'No settings file found... will create one for you', keep_on_top=True,
-                               background_color='red', text_color='white')
         settings = default_settings
         save_settings(settings_file, settings, None)
     return settings
@@ -93,8 +103,6 @@ def save_settings(settings_file, settings, values):
     with open(settings_file, 'w') as f:
         jsondump(settings, f, indent=4, sort_keys=True)
 
-    sg.popup('Settings saved')
-
 
 ##################### Make a settings window #####################
 def create_settings_window(settings):
@@ -104,10 +112,14 @@ def create_settings_window(settings):
         return sg.Text(text + ':', justification='r', size=(15, 1))
 
     layout = [[sg.Text('Settings', font='Any 15')],
+              [sg.CBox('Window Always On Top', key='-KEEP_ON_TOP_SETTING-')],
+              [TextLabel('Theme'), sg.Combo(theme_combo, size=(20, 20), key='-THEME-')],
               [TextLabel('Max Users'), sg.Input(key='-MAX USERS-')],
               [TextLabel('User Folder'), sg.Input(key='-USER FOLDER-'), sg.FolderBrowse(target='-USER FOLDER-')],
+              [sg.Text('Download Preferences', font='Any 15')],
               [TextLabel('Zipcode'), sg.Input(key='-ZIPCODE-')],
-              [TextLabel('Theme'), sg.Combo(sg.theme_list(), size=(20, 20), key='-THEME-')],
+              [TextLabel('min_length'), sg.Input(key='-MIN_LENGTH-')],
+              [TextLabel('max_length'), sg.Input(key='-MAX_LENGTH-')],
               [sg.Button('Save'), sg.Button('Exit')]]
 
     window = sg.Window('Settings', layout, keep_on_top=True, finalize=True)
@@ -121,7 +133,6 @@ def create_settings_window(settings):
     return window
 
 
-# TODO now
 def validation(value):
     # validation between pages
     for i in range((len(value) // 3) - 1):
@@ -147,39 +158,28 @@ def validation(value):
     return value
 
 
-def gui_1line(value):
-    window, settings = None, load_settings(SETTINGS_FILE, DEFAULT_SETTINGS)
-    # gui 1 window details
+def change_settings(window, settings):
+    event, values = create_settings_window(settings).read(close=True)
+    if event == 'Save':
+        window.close()
+        window = None
+        save_settings(SETTINGS_FILE, settings, values)
+    if event in (None, 'Exit'):
+        exit()
 
+
+def gui_1line(value, settings):
+    sg.theme(settings['theme'])
     gui_input_row_1 = [[sg.InputText(str(value[10]), size=row1, key=10),
                         sg.Combo(how_much_combo,
                                  default_value=value[11], size=row2, key=11),
                         sg.Combo(stems_methods, size=row3, default_value=value[12], key=12)]]
-
     # initialize specific part
-    window1 = sg.Window(title=program_title,
-                        layout=(gui_menu() + gui_info_row() + gui_input_row_1 + gui_output_folder() + gui_buttons()
-                                + gui_download() +gui_change_settings()),
-                        keep_on_top=keep_on_top_bool,
-                        icon=icon_path)
-
-    event, value = window1.read()
-    window1.close()
-    value = validation(value)
-
-    if event == "add5":
-        value = gui_10line(value)
-
-    if event == 'Change Settings':
-        event, values = create_settings_window(settings).read(close=True)
-        if event == 'Save':
-            window1.close()
-            window = None
-            save_settings(SETTINGS_FILE, settings, values)
-
-    window.close()
-
-    return value
+    return sg.Window(title=program_title,
+                     layout=(gui_menu() + gui_info_row() + gui_input_row_1 + gui_output_folder() + gui_buttons()
+                             + gui_download() + gui_change_settings()),
+                     keep_on_top=keep_on_top_bool,
+                     icon=icon_path)
 
 
 def gui_10line(value):
@@ -225,7 +225,8 @@ def gui_10line(value):
                          sg.Combo(stems_methods, size=row3, default_value=stems_methods[0], key=102)]]
 
     window10 = sg.Window(title=program_title,
-                         layout=(gui_menu() + gui_info_row() + gui_input_row_10 + gui_output_folder() + gui_download()),
+                         layout=(
+                                 gui_menu() + gui_info_row() + gui_input_row_10 + gui_output_folder() + gui_download() + gui_change_settings()),
                          keep_on_top=keep_on_top_bool,
                          icon=icon_path)
 
@@ -237,9 +238,23 @@ def gui_10line(value):
     return value
 
 
-
 def main():
-    gui_1line(values_start)
+    window, settings = None, load_settings(SETTINGS_FILE, DEFAULT_SETTINGS)
+
+    while True:  # Event Loop
+        window = gui_1line(values_start, settings)
+
+        event, value = window.read()
+        window.close()
+
+        if event == "add5":
+            gui_10line(value)
+
+        if event == 'Change Settings':
+            change_settings(window, settings)
+
+        if event in (None, 'Exit'):
+            exit()
 
 
 main()
