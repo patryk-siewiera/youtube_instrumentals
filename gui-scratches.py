@@ -73,22 +73,30 @@ def gui_theme_picker():
 
 SETTINGS_FILE = os.path.join(os.path.dirname(__file__), r'settings_file.cfg')
 DEFAULT_SETTINGS = {'max_users': 10, 'user_data_folder': None, 'theme': sg.theme(), 'zipcode': '94102',
-                    'keep_on_top_setting': False, 'min_length': 10, 'max_length': 1000}
+                    'keep_on_top_setting': False, 'min_length': 10, 'max_length': 1000,
+                    'min_views': 1, 'max_views': 10000000000}
 
 # "Map" from the settings dictionary keys to the window's element keys
 SETTINGS_KEYS_TO_ELEMENT_KEYS = {'max_users': '-MAX USERS-', 'user_data_folder': '-USER FOLDER-', 'theme': '-THEME-',
                                  'zipcode': '-ZIPCODE-', 'keep_on_top_setting': '-KEEP_ON_TOP_SETTING-',
-                                 'min_length': '-MIN_LENGTH-', 'max_length': '-MAX_LENGTH-'}
+                                 'min_length': '-MIN_LENGTH-', 'max_length': '-MAX_LENGTH-',
+                                 'min_views': '-MIN_VIEWS-', 'max_views': '-MAX_VIEWS-'}
 
 
 ##################### Load/Save Settings File #####################
+def defaults_settings_def(settings_file, default_settings):
+    settings = default_settings
+    save_settings(settings_file, settings, None)
+    return settings
+
+
 def load_settings(settings_file, default_settings):
     try:
         with open(settings_file, 'r') as f:
             settings = jsonload(f)
     except Exception as e:
-        settings = default_settings
-        save_settings(settings_file, settings, None)
+        settings = defaults_settings_def(settings_file, default_settings)
+
     return settings
 
 
@@ -111,15 +119,21 @@ def create_settings_window(settings):
     def TextLabel(text):
         return sg.Text(text + ':', justification='r', size=(15, 1))
 
+    inp_size = (15, 2)
+
     layout = [[sg.Text('Settings', font='Any 15')],
               [sg.CBox('Window Always On Top', key='-KEEP_ON_TOP_SETTING-')],
-              [TextLabel('Theme'), sg.Combo(theme_combo, size=(20, 20), key='-THEME-')],
-              [TextLabel('Max Users'), sg.Input(key='-MAX USERS-')],
-              [TextLabel('User Folder'), sg.Input(key='-USER FOLDER-'), sg.FolderBrowse(target='-USER FOLDER-')],
+              [TextLabel('Theme'), sg.Combo(theme_combo, size=(10, 10), key='-THEME-')],
+              [TextLabel('Max Users'), sg.Input(key='-MAX USERS-', size=inp_size)],
+              [TextLabel('User Folder'), sg.Input(key='-USER FOLDER-', size=inp_size),
+               sg.FolderBrowse(target='-USER FOLDER-')],
               [sg.Text('Download Preferences', font='Any 15')],
-              [TextLabel('Zipcode'), sg.Input(key='-ZIPCODE-')],
-              [TextLabel('min_length'), sg.Input(key='-MIN_LENGTH-')],
-              [TextLabel('max_length'), sg.Input(key='-MAX_LENGTH-')],
+              [TextLabel('Zipcode'), sg.Input(key='-ZIPCODE-', size=inp_size)],
+              [TextLabel('min_length'), sg.Input(key='-MIN_LENGTH-', size=inp_size), TextLabel('max_length'),
+               sg.Input(key='-MAX_LENGTH-', size=inp_size)],
+              [TextLabel('min_views'), sg.Input(key='-MIN_VIEWS-', size=inp_size), TextLabel('max_views'),
+               sg.Input(key='-MAX_VIEWS-', size=inp_size)],
+              [sg.Button('Reset to Defaults')],
               [sg.Button('Save'), sg.Button('Exit')]]
 
     window = sg.Window('Settings', layout, keep_on_top=True, finalize=True)
@@ -164,6 +178,13 @@ def change_settings(window, settings):
         window.close()
         window = None
         save_settings(SETTINGS_FILE, settings, values)
+    if event == 'Reset to Defaults':
+        print('Reset to Defaults')
+        try:
+            defaults_settings_def(SETTINGS_FILE, DEFAULT_SETTINGS)
+        except:
+            pass
+        gui_1line(values_start, settings)
     if event in (None, 'Exit'):
         exit()
 
@@ -239,9 +260,9 @@ def gui_10line(value):
 
 
 def main():
-    window, settings = None, load_settings(SETTINGS_FILE, DEFAULT_SETTINGS)
 
     while True:  # Event Loop
+        window, settings = None, load_settings(SETTINGS_FILE, DEFAULT_SETTINGS)
         window = gui_1line(values_start, settings)
 
         event, value = window.read()
