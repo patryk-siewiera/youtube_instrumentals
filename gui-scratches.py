@@ -54,15 +54,18 @@ values_start = {
 
 # static parts of gui
 def gui_menu():
+    """create top menu: file / about"""
     return [[sg.Menu(menu_layout)]]
 
 
 def gui_info_row():
+    """add information about every row """
     return [[sg.Text('Keywords or Link', size=(35, 1), key="11"), sg.Text('How much', size=(10, 1)),
              sg.Text('Method 1/2/4/5')]]
 
 
 def gui_output_folder():
+    """gui part: default folder"""
     return [[sg.Text('')],
             [sg.Text('Output folder'), sg.InputText(default_text=cwd, size=output_row, key='cwd'),
              sg.FolderBrowse()],
@@ -70,18 +73,24 @@ def gui_output_folder():
 
 
 def gui_change_settings():
+    """gui button: change settings"""
     return [[sg.Button(key="Change Settings", button_text='Change Settings')]]
 
 
 def gui_buttons():
+    """TODO: combine here all buttons for cleanup
+    gui buttons function"""
     return [[sg.Button(key="add5", button_text="            + + +           ")]]
 
 
 def gui_download():
+    """gui button download: returns all data to youtube-dl module
+    #TODO: youtube-dl module """
     return [[sg.Submit(button_text="         Download        ")]]
 
 
 def gui_theme_picker():
+    """gui settings part theme picker"""
     return [[sg.Combo(theme_combo)]]
 
 
@@ -102,13 +111,8 @@ SETTINGS_KEYS_TO_ELEMENT_KEYS = {'theme': '-THEME-',
 
 
 ##################### Load/Save Settings File #####################
-def defaults_settings_def(settings_file, default_settings):
-    settings = default_settings
-    save_settings(settings_file, settings, None)
-    return settings
-
-
 def load_settings(settings_file, default_settings):
+    """try to load existing settings if not, create new file from defaults"""
     try:
         with open(settings_file, 'r') as f:
             settings = jsonload(f)
@@ -118,7 +122,15 @@ def load_settings(settings_file, default_settings):
     return settings
 
 
+def defaults_settings_def(settings_file, default_settings):
+    """load defaults settings"""
+    settings = default_settings
+    save_settings(settings_file, settings, None)
+    return settings
+
+
 def save_settings(settings_file, settings, values):
+    """"try to save values as settings_file.cfg (json)"""
     if values:  # if there are stuff specified by another window, fill in those values
         for key in SETTINGS_KEYS_TO_ELEMENT_KEYS:  # update window with the values read from settings file
             try:
@@ -132,9 +144,11 @@ def save_settings(settings_file, settings, values):
 
 ##################### Make a settings window #####################
 def create_settings_window(settings):
+    """gui settings window create"""
     sg.theme(settings['theme'])
 
     def TextLabel(text):
+        """to simplify variable layout, use this function for text label"""
         return sg.Text(text + ':', justification='r', size=(20, 1))
 
     inp_size = (15, 2)
@@ -142,7 +156,7 @@ def create_settings_window(settings):
 
     layout = [[sg.Text('Settings', font='Any 15')],
               [sg.CBox('Window Always On Top', key='-KEEP_ON_TOP_SETTING-')],
-              [TextLabel('Theme'), sg.Combo(theme_combo, size=(13, 10), key='-THEME-')],
+              [TextLabel('Theme'), sg.Combo(values=theme_combo, size=(13, 10), key='-THEME-')],
               [sg.Text()],
               [sg.Text('Tunebat Scraping Preferences', font='Any 15')],
               [sg.CBox('Use TuneBat to specify bpm and key', key='IF_TUNEBAT_USING')],
@@ -165,6 +179,8 @@ def create_settings_window(settings):
 
     window = sg.Window('Settings', layout, keep_on_top=True, finalize=True)
 
+    # rewrite -THEME- map
+
     for key in SETTINGS_KEYS_TO_ELEMENT_KEYS:  # update window with the values read from settings file
         try:
             window[SETTINGS_KEYS_TO_ELEMENT_KEYS[key]].update(value=settings[key])
@@ -175,7 +191,7 @@ def create_settings_window(settings):
 
 
 def validation(value):
-    # validation between pages
+    """validate input values for youtube-dl, and between pages"""
     for i in range((len(value) // 3) - 1):
         i = i + 1
         # iterator for second table
@@ -200,6 +216,7 @@ def validation(value):
 
 
 def change_settings(window, settings):
+    """backend for settings menu"""
     event, values = create_settings_window(settings).read(close=True)
     if event == 'Save':
         window.close()
@@ -217,6 +234,7 @@ def change_settings(window, settings):
 
 
 def gui_1line(value, settings):
+    """initial menu, for one line downloader"""
     sg.theme(settings['theme'])
     gui_input_row_1 = [[sg.InputText(str(value[10]), size=row1, key=10),
                         sg.Combo(how_much_combo,
@@ -231,6 +249,7 @@ def gui_1line(value, settings):
 
 
 def gui_10line(value, settings):
+    """menu for 10 rows downloading"""
     gui_input_row_10 = [[sg.InputText(str(value[10]), size=row1, key=10),
                          sg.Combo(how_much_combo,
                                   size=row2, key=11, default_value=value[11]),

@@ -5,6 +5,7 @@ import time
 
 
 def create_folder(folder_name):
+    """create folders specified in argument"""
     print('\n_* def create_folder():  INPUT == ', folder_name, '\n')
     try:
         os.mkdir(folder_name)
@@ -15,6 +16,7 @@ def create_folder(folder_name):
 
 
 def move_files(extension, folder):
+    """move files with extension to specyfic folder"""
     print('\n_* def move_files():  INPUT ==  ext==', extension, " folder==", folder)
     sourcepath = Path().absolute()
     sourcefiles = os.listdir(sourcepath)
@@ -31,6 +33,7 @@ def move_files(extension, folder):
 
 
 def remove_delete_download():
+    """delete folders with all content from: !delete, !download"""
     print('\n')
     try:
         shutil.rmtree('!delete')

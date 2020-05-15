@@ -4,11 +4,13 @@ import validators
 import PySimpleGUI as sg
 
 
+# just proof if this even works
+
 def gui():
     sg.theme('dark')  # theme color
 
     layout = [[sg.Text('Top line text')],
-              [sg.InputText(), sg.Text('url'),],
+              [sg.InputText(), sg.Text('url'), ],
               [sg.InputText(), sg.Text('url2')],
               [sg.InputText(), sg.Text('keyword')],
               [sg.InputText(), sg.Text('keyword2')],
@@ -94,8 +96,6 @@ def ydl(url_keyword):
             youtube_dl.YoutubeDL(ydl_opts_wav).extract_info("ytsearch:" + keyword[i])
         except:
             print('EXCEPT: youtube-dl unsupported keyword')
-
-
 
     # TODO: progress hooks
 
