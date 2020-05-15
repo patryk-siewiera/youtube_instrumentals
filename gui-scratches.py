@@ -11,15 +11,18 @@ row2 = (10, 1)  # how much
 row3 = (50, 1)  # method selection
 output_row = (80, 1)  # folder output
 
+# button colors
+button_yes = ('White', 'Green')
+button_no = ('White', 'Red')
+
 # default values
 how_much_combo = [0, 1, 2, 5, 10, 15, 20, 30, 50, 100]
 stems_methods = ['1: Without Separation : Whole track',
                  '2: Stems: Vocal / Instrumental separation',
                  '4: Stems: Vocals / Drums / Bass / Other separation',
                  '5: Stems: Vocals / Drums / Bass / Piano / Other separation']
-menu_layout = [['File', ['Settings', 'Exit']],
-               ['Tools', ['Remove cache youtube-dl']],
-               ["Help", ['Github Page', 'About']]]
+
+menu_layout = [["Help", ['Help', 'Github page', 'About']]]
 bpm_combo = [40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160, 170, 180, 190, 200, 210, 220, 230, 240, 250,
              260, 270, 280, 290, 300, 310]
 
@@ -51,6 +54,21 @@ values_start = {
     10: '', 11: 0, 12: '1: Without Separation : Whole track',
 }
 
+SETTINGS_FILE = os.path.join(os.path.dirname(__file__), r'settings_file.cfg')
+DEFAULT_SETTINGS = {'theme': sg.theme(),
+                    'keep_on_top_setting': False, 'min_length': 10, 'max_length': 1000,
+                    'min_views': 1, 'max_views': 10000000000, 'key': keys_combo[0], 'key_range': 12,
+                    'bpm': bpm_combo[8], 'bpm_range': 150, 'if_tunebat_using': False, 'geo-bypass': False}
+
+# "Map" from the settings dictionary keys to the window's element keys
+SETTINGS_KEYS_TO_ELEMENT_KEYS = {'theme': '-THEME-',
+                                 'keep_on_top_setting': '-KEEP_ON_TOP_SETTING-',
+                                 'min_length': '-MIN_LENGTH-', 'max_length': '-MAX_LENGTH-',
+                                 'min_views': '-MIN_VIEWS-', 'max_views': '-MAX_VIEWS-',
+                                 'key': '-KEY-', 'key_range': '-KEY_RANGE-',
+                                 'bpm': '-BPM-', 'bpm_range': '-BPM_RANGE-',
+                                 'if_tunebat_using': 'IF_TUNEBAT_USING', 'geo-bypass': '-GEO-BYPASS-'}
+
 
 # static parts of gui
 def gui_menu():
@@ -72,42 +90,23 @@ def gui_output_folder():
             [sg.Text('')]]
 
 
-def gui_change_settings():
-    """gui button: change settings"""
-    return [[sg.Button(key="Change Settings", button_text='Change Settings')]]
-
-
 def gui_buttons():
     """TODO: combine here all buttons for cleanup
     gui buttons function"""
-    return [[sg.Button(key="add5", button_text="            + + +           ")]]
+    return [[sg.Button(key="add5", button_text="            + + +           "),
+             sg.Button(key="Change Settings", button_text='  Change Settings  ')]]
 
 
 def gui_download():
     """gui button download: returns all data to youtube-dl module
     #TODO: youtube-dl module """
-    return [[sg.Submit(button_text="         Download        ")]]
+    return [[sg.Submit(button_text="         Download        ", button_color=button_yes),
+             sg.Button('           Exit           ', key='Exit', button_color=button_no)]]
 
 
 def gui_theme_picker():
     """gui settings part theme picker"""
     return [[sg.Combo(theme_combo)]]
-
-
-SETTINGS_FILE = os.path.join(os.path.dirname(__file__), r'settings_file.cfg')
-DEFAULT_SETTINGS = {'theme': sg.theme(),
-                    'keep_on_top_setting': False, 'min_length': 10, 'max_length': 1000,
-                    'min_views': 1, 'max_views': 10000000000, 'key': keys_combo[0], 'key_range': 12,
-                    'bpm': bpm_combo[8], 'bpm_range': 150, 'if_tunebat_using': False, 'geo-bypass': False}
-
-# "Map" from the settings dictionary keys to the window's element keys
-SETTINGS_KEYS_TO_ELEMENT_KEYS = {'theme': '-THEME-',
-                                 'keep_on_top_setting': '-KEEP_ON_TOP_SETTING-',
-                                 'min_length': '-MIN_LENGTH-', 'max_length': '-MAX_LENGTH-',
-                                 'min_views': '-MIN_VIEWS-', 'max_views': '-MAX_VIEWS-',
-                                 'key': '-KEY-', 'key_range': '-KEY_RANGE-',
-                                 'bpm': '-BPM-', 'bpm_range': '-BPM_RANGE-',
-                                 'if_tunebat_using': 'IF_TUNEBAT_USING', 'geo-bypass': '-GEO-BYPASS-'}
 
 
 ##################### Load/Save Settings File #####################
@@ -174,8 +173,9 @@ def create_settings_window(settings):
                sg.Input(key='-MAX_VIEWS-', size=inp_size)],
               [sg.Text()],
               [sg.Text('Spleeter Preferences (separation engine)', font='Any 15')],
-              [sg.Button('Reset to Defaults')],
-              [sg.Button('Save'), sg.Button('Exit')]]
+              [sg.Button('  Reset to Defaults  ', key='Reset to Defaults')],
+              [sg.Button('   Save   ', key='Save', button_color=button_yes),
+               sg.Button('   Exit   ', key='Exit', button_color=button_no)]]
 
     window = sg.Window('Settings', layout, keep_on_top=True, finalize=True)
 
@@ -243,7 +243,7 @@ def gui_1line(value, settings):
     # initialize specific part
     return sg.Window(title=program_title,
                      layout=(gui_menu() + gui_info_row() + gui_input_row_1 + gui_output_folder() + gui_buttons()
-                             + gui_download() + gui_change_settings()),
+                             + gui_download()),
                      keep_on_top=settings['keep_on_top_setting'],
                      icon=icon_path)
 
@@ -293,7 +293,7 @@ def gui_10line(value, settings):
 
     window10 = sg.Window(title=program_title,
                          layout=(
-                                 gui_menu() + gui_info_row() + gui_input_row_10 + gui_output_folder() + gui_download() + gui_change_settings()),
+                                 gui_menu() + gui_info_row() + gui_input_row_10 + gui_output_folder() + gui_download()),
                          keep_on_top=settings['keep_on_top_setting'],
                          icon=icon_path)
 
