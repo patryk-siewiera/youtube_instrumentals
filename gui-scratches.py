@@ -68,7 +68,14 @@ SETTINGS_KEYS_TO_ELEMENT_KEYS = {'theme': '-THEME-',
                                  'min_views': '-MIN_VIEWS-', 'max_views': '-MAX_VIEWS-',
                                  'key': '-KEY-', 'key_range': '-KEY_RANGE-',
                                  'bpm': '-BPM-', 'bpm_range': '-BPM_RANGE-',
-                                 'if_tunebat_using': 'IF_TUNEBAT_USING', 'geo-bypass': '-GEO-BYPASS-'}
+                                 'if_tunebat_using': '-IF_TUNEBAT_USING-', 'geo-bypass': '-GEO-BYPASS-', }
+
+
+def gui_help():
+    """open website (django)"""
+    sg.popup("""
+    --- THIS WILL OPEN HELP PAGE ---
+    """)
 
 
 def gui_about():
@@ -83,12 +90,16 @@ Used Python Packages:
 - PySimpleGui
 - YouTubeDL
 - Spleeter (Deezer)
+
+
 """, title="about", keep_on_top=True)
 
 
 def gui_github_page():
     """open webpage github with project"""
-    webbrowser.open_new_tab(url="https://github.com/patryk-siewiera/youtube_instrumentals")
+    url_git = 'https://github.com/patryk-siewiera/youtube_instrumentals'
+    sg.popup_timed("\nOpening webpage: \n\n" + url_git + "\n", auto_close_duration=2, title="info")
+    webbrowser.open_new_tab(url=url_git)
 
 
 # static parts of gui
@@ -99,14 +110,14 @@ def gui_menu():
 
 def gui_info_row():
     """add information about every row """
-    return [[sg.Text('Keywords or Link', size=(35, 1), key="11"), sg.Text('How much', size=(10, 1)),
+    return [[sg.Text('Keywords, Link or Local File Url', size=(35, 1), key="11"), sg.Text('How much', size=(10, 1)),
              sg.Text('Method 1/2/4/5')]]
 
 
 def gui_output_folder():
     """gui part: default folder"""
     return [[sg.Text('')],
-            [sg.Text('Output folder'), sg.InputText(default_text=cwd, size=output_row, key='cwd'),
+            [sg.Text('Output folder'), sg.InputText(default_text=cwd, size=output_row, key='-DEFAULT_FOLDER-'),
              sg.FolderBrowse()],
             [sg.Text('')]]
 
@@ -183,20 +194,21 @@ def create_settings_window(settings):
               [sg.CBox('Window Always On Top', key='-KEEP_ON_TOP_SETTING-')],
               [TextLabel('Theme'), sg.Combo(values=theme_combo, size=(13, 10), key='-THEME-')],
               [sg.Text()],
-              [sg.Text('Tunebat Scraping Preferences', font='Any 15')],
-              [sg.CBox('Use TuneBat to specify bpm and key', key='IF_TUNEBAT_USING')],
-              [TextLabel('bpm'), sg.Combo(bpm_combo, key='-BPM-', size=cmb_size), TextLabel('bpm_range'),
-               sg.Input(key='-BPM_RANGE-', size=inp_size)],
-              [TextLabel('key'), sg.Combo(keys_combo, key='-KEY-', size=cmb_size),
-               TextLabel('key_range - circle of fifth'),
-               sg.Input(key='-KEY_RANGE-', size=inp_size)],
-              [sg.Text()],
               [sg.Text('YouTube Download Preferences', font='Any 15')],
               [sg.CBox('geo-bypass', key='-GEO-BYPASS-', size=cmb_size)],
               [TextLabel('min_length'), sg.Input(key='-MIN_LENGTH-', size=inp_size), TextLabel('max_length'),
                sg.Input(key='-MAX_LENGTH-', size=inp_size)],
               [TextLabel('min_views'), sg.Input(key='-MIN_VIEWS-', size=inp_size), TextLabel('max_views'),
                sg.Input(key='-MAX_VIEWS-', size=inp_size)],
+              [TextLabel("naming wildcards TODO")],
+              [sg.Text()],
+              [sg.Text('Tunebat Scraping Preferences', font='Any 15')],
+              [sg.CBox('Use TuneBat to specify bpm and key', key='-IF_TUNEBAT_USING-')],
+              [TextLabel('bpm'), sg.Combo(bpm_combo, key='-BPM-', size=cmb_size), TextLabel('bpm_range'),
+               sg.Input(key='-BPM_RANGE-', size=inp_size)],
+              [TextLabel('key'), sg.Combo(keys_combo, key='-KEY-', size=cmb_size),
+               TextLabel('key_range - circle of fifth'),
+               sg.Input(key='-KEY_RANGE-', size=inp_size)],
               [sg.Text()],
               [sg.Text('Spleeter Preferences (separation engine)', font='Any 15')],
               [sg.Button('  Reset to Defaults  ', key='Reset to Defaults')],
@@ -351,6 +363,12 @@ def main():
 
         if event == "GitHub Page":
             gui_github_page()
+
+        if event == "Help":
+            gui_help()
+
+        if event == "Download":
+            return event
 
         if event in (None, 'Exit'):
             exit()
