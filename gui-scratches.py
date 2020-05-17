@@ -1,6 +1,7 @@
 import os
 from json import (load as jsonload, dump as jsondump)
 import PySimpleGUI as sg
+import webbrowser
 
 # current directory folder
 cwd = "{0}\\!download".format(os.getcwd())
@@ -22,7 +23,7 @@ stems_methods = ['1: Without Separation : Whole track',
                  '4: Stems: Vocals / Drums / Bass / Other separation',
                  '5: Stems: Vocals / Drums / Bass / Piano / Other separation']
 
-menu_layout = [["Help", ['Help', 'Github page', 'About']]]
+menu_layout = [["Help", ['Help', 'GitHub Page', 'About']]]
 bpm_combo = [40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160, 170, 180, 190, 200, 210, 220, 230, 240, 250,
              260, 270, 280, 290, 300, 310]
 
@@ -70,6 +71,26 @@ SETTINGS_KEYS_TO_ELEMENT_KEYS = {'theme': '-THEME-',
                                  'if_tunebat_using': 'IF_TUNEBAT_USING', 'geo-bypass': '-GEO-BYPASS-'}
 
 
+def gui_about():
+    """open popup: about information and libraries"""
+    sg.popup("""
+
+
+PLEASE USE THIS ONLY WITH NOT COPYRIGHTED MATERIAL 
+ONLY EDUCATIONAL USE
+
+Used Python Packages:
+- PySimpleGui
+- YouTubeDL
+- Spleeter (Deezer)
+""", title="about", keep_on_top=True)
+
+
+def gui_github_page():
+    """open webpage github with project"""
+    webbrowser.open_new_tab(url="https://github.com/patryk-siewiera/youtube_instrumentals")
+
+
 # static parts of gui
 def gui_menu():
     """create top menu: file / about"""
@@ -90,14 +111,19 @@ def gui_output_folder():
             [sg.Text('')]]
 
 
-def gui_buttons():
-    """TODO: combine here all buttons for cleanup
-    gui buttons function"""
+def gui_remove10():
+    """go back to gui 1 line download"""
+    return [[sg.Button(key="remove10", button_text="             - - -             "),
+             sg.Button(key="Change Settings", button_text='  Change Settings  ')]]
+
+
+def gui_add10():
+    """gui buttons function"""
     return [[sg.Button(key="add5", button_text="            + + +           "),
              sg.Button(key="Change Settings", button_text='  Change Settings  ')]]
 
 
-def gui_download():
+def gui_download_exit():
     """gui button download: returns all data to youtube-dl module
     #TODO: youtube-dl module """
     return [[sg.Submit(button_text="         Download        ", button_color=button_yes),
@@ -179,7 +205,7 @@ def create_settings_window(settings):
 
     window = sg.Window('Settings', layout, keep_on_top=True, finalize=True)
 
-    # rewrite -THEME- map
+    # TODO: rewrite -THEME- map
 
     for key in SETTINGS_KEYS_TO_ELEMENT_KEYS:  # update window with the values read from settings file
         try:
@@ -242,8 +268,8 @@ def gui_1line(value, settings):
                         sg.Combo(stems_methods, size=row3, default_value=value[12], key=12)]]
     # initialize specific part
     return sg.Window(title=program_title,
-                     layout=(gui_menu() + gui_info_row() + gui_input_row_1 + gui_output_folder() + gui_buttons()
-                             + gui_download()),
+                     layout=(gui_menu() + gui_info_row() + gui_input_row_1 + gui_output_folder() + gui_add10()
+                             + gui_download_exit()),
                      keep_on_top=settings['keep_on_top_setting'],
                      icon=icon_path)
 
@@ -293,7 +319,8 @@ def gui_10line(value, settings):
 
     window10 = sg.Window(title=program_title,
                          layout=(
-                                 gui_menu() + gui_info_row() + gui_input_row_10 + gui_output_folder() + gui_download()),
+                                 gui_menu() + gui_info_row() + gui_input_row_10 + gui_output_folder() + gui_remove10()
+                                 + gui_download_exit()),
                          keep_on_top=settings['keep_on_top_setting'],
                          icon=icon_path)
 
@@ -314,13 +341,21 @@ def main():
         window.close()
 
         if event == "add5":
-            gui_10line(value)
+            gui_10line(value, settings)
 
         if event == 'Change Settings':
             change_settings(window, settings)
+
+        if event == "About":
+            gui_about()
+
+        if event == "GitHub Page":
+            gui_github_page()
 
         if event in (None, 'Exit'):
             exit()
 
 
 main()
+
+# gui_github_page()
