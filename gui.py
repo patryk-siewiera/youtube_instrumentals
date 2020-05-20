@@ -1,7 +1,8 @@
 import os
-from json import (load as jsonload, dump as jsondump)
-import PySimpleGUI as sg
 import webbrowser
+from json import (load as jsonload, dump as jsondump)
+
+import PySimpleGUI as sg
 
 # current directory folder
 cwd = "{0}\\!download".format(os.getcwd())
@@ -122,15 +123,15 @@ def gui_output_folder():
             [sg.Text('')]]
 
 
-def gui_remove10():
+def gui_oneline():
     """go back to gui 1 line download"""
-    return [[sg.Button(key="remove10", button_text="             - - -             "),
+    return [[sg.Button(key="one_line", button_text="             - - -             "),
              sg.Button(key="Change Settings", button_text='  Change Settings  ')]]
 
 
 def gui_add10():
     """gui buttons function"""
-    return [[sg.Button(key="add5", button_text="            + + +           "),
+    return [[sg.Button(key="add10", button_text="            + + +           "),
              sg.Button(key="Change Settings", button_text='  Change Settings  ')]]
 
 
@@ -146,6 +147,11 @@ def gui_theme_picker():
     return [[sg.Combo(theme_combo)]]
 
 
+def current_data(data, default_data):
+    """keep data during change of pages in gui"""
+    pass
+
+
 ##################### Load/Save Settings File #####################
 def load_settings(settings_file, default_settings):
     """try to load existing settings if not, create new file from defaults"""
@@ -154,13 +160,12 @@ def load_settings(settings_file, default_settings):
             settings = jsonload(f)
     except Exception as e:
         settings = defaults_settings_def(settings_file, default_settings)
-
     return settings
 
 
 def defaults_settings_def(settings_file, default_settings):
     """load defaults settings"""
-    settings = default_settings
+    settings = default_settings.copy()
     save_settings(settings_file, settings, None)
     return settings
 
@@ -180,7 +185,7 @@ def save_settings(settings_file, settings, values):
 
 ##################### Make a settings window #####################
 def create_settings_window(settings):
-    """gui settings window create"""
+    """gui for SETTINGS WINDOW create"""
     sg.theme(settings['theme'])
 
     def TextLabel(text):
@@ -253,40 +258,47 @@ def validation(value):
     return value
 
 
-def change_settings(window, settings):
-    """backend for settings menu"""
-    event, values = create_settings_window(settings).read(close=True)
-    if event == 'Save':
-        window.close()
+def change_settings(window, settings, event):
+    """backend:  for settings menu"""
+    current_event, values = create_settings_window(settings).read(close=True)
+    if current_event == 'Save':
         window = None
         save_settings(SETTINGS_FILE, settings, values)
-    if event == 'Reset to Defaults':
-        print('Reset to Defaults')
+        return event[:-1], settings
+    if current_event == 'Reset to Defaults':
         try:
-            defaults_settings_def(SETTINGS_FILE, DEFAULT_SETTINGS)
+            settings = defaults_settings_def(SETTINGS_FILE, DEFAULT_SETTINGS)
         except:
             pass
-        gui_1line(values_start, settings)
-    if event in (None, 'Exit'):
-        exit()
+        return event[:-1], settings
+    if current_event in (None, 'Exit'):
+        return event[:-1], settings
 
 
-def gui_1line(value, settings):
+def gui_1line(value, settings, event_list):
     """initial menu, for one line downloader"""
     sg.theme(settings['theme'])
     gui_input_row_1 = [[sg.InputText(str(value[10]), size=row1, key=10),
                         sg.Combo(how_much_combo,
                                  default_value=value[11], size=row2, key=11),
                         sg.Combo(stems_methods, size=row3, default_value=value[12], key=12)]]
+
     # initialize specific part
-    return sg.Window(title=program_title,
-                     layout=(gui_menu() + gui_info_row() + gui_input_row_1 + gui_output_folder() + gui_add10()
-                             + gui_download_exit()),
-                     keep_on_top=settings['keep_on_top_setting'],
-                     icon=icon_path)
+    window1 = sg.Window(title=program_title,
+                        layout=(gui_menu() + gui_info_row() + gui_input_row_1 + gui_output_folder() + gui_add10()
+                                + gui_download_exit()),
+                        keep_on_top=settings['keep_on_top_setting'],
+                        icon=icon_path)
+
+    event, value = window1.read()
+    window1.close()
+    event_list.append(event)
+    value = validation(value)
+
+    return value, settings, event_list
 
 
-def gui_10line(value, settings):
+def gui_10line(value, settings, event_list):
     """menu for 10 rows downloading"""
     gui_input_row_10 = [[sg.InputText(str(value[10]), size=row1, key=10),
                          sg.Combo(how_much_combo,
@@ -331,49 +343,49 @@ def gui_10line(value, settings):
 
     window10 = sg.Window(title=program_title,
                          layout=(
-                                 gui_menu() + gui_info_row() + gui_input_row_10 + gui_output_folder() + gui_remove10()
-                                 + gui_download_exit()),
+                                 gui_menu() + gui_info_row() + gui_input_row_10 + gui_output_folder() +
+                                 gui_oneline() + gui_download_exit()),
                          keep_on_top=settings['keep_on_top_setting'],
                          icon=icon_path)
 
     event, value = window10.read()
     window10.close()
+    event_list.append(event)
 
     value = validation(value)
 
-    return value
+    return value, settings, event_list
 
 
 def main():
+    event = [None, 'one_line']
+    window, settings = None, load_settings(SETTINGS_FILE, DEFAULT_SETTINGS)
+    value, settings, event = gui_1line(values_start, settings, event)
     while True:  # Event Loop
-        window, settings = None, load_settings(SETTINGS_FILE, DEFAULT_SETTINGS)
-        window = gui_1line(values_start, settings)
 
-        event, value = window.read()
-        window.close()
+        if event[-1] == "add10":
+            value, settings, event = gui_10line(value, settings, event)
 
-        if event == "add5":
-            gui_10line(value, settings)
+        if event[-1] == "one_line":
+            value, settings, event = gui_1line(value, settings, event)
 
-        if event == 'Change Settings':
-            change_settings(window, settings)
+        if event[-1] == 'Change Settings':
+            event, settings = change_settings(window, settings, event)
 
-        if event == "About":
+        if event[-1] == "About":
             gui_about()
 
-        if event == "GitHub Page":
+        if event[-1] == "GitHub Page":
             gui_github_page()
 
-        if event == "Help":
+        if event[-1] == "Help":
             gui_help()
 
-        if event == "Download":
+        if event[-1] == "Download":
             return event
 
-        if event in (None, 'Exit'):
+        if event[-1] in (None, 'Exit'):
             exit()
 
 
 main()
-
-# gui_github_page()
