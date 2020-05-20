@@ -22,31 +22,23 @@ def move_files(extension, folder):
     sourcefiles = os.listdir(sourcepath)
     destination = str(sourcepath) + "\\" + folder
 
-    print("list of all files: \n", sourcefiles)
-
-    print("source:", sourcepath)
-    print("destination:", destination)
-
     for file in sourcefiles:
         if file.endswith(extension):
             shutil.move(os.path.join(sourcepath, file), os.path.join(destination, file))
 
 
-def remove_delete_download():
-    """delete folders with all content from: !delete, !download"""
+def remove_delete_download(folder):
+    """delete folders with all content from:""" + folder
     print('\n')
     try:
-        shutil.rmtree('!delete')
+        shutil.rmtree(folder)
     except:
-        print('---')
-    try:
-        shutil.rmtree('!download')
-    except:
-        print('---')
+        print('Cannot delete: ', folder)
 
 
-move_files('.wav', create_folder('!delete'))
-
-move_files('.part', create_folder('!delete'))
-
-remove_delete_download()
+def main():
+    move_files('.part', create_folder('!delete'))
+    move_files('.ytdl', create_folder('!delete'))
+    move_files('.wav', create_folder('!delete'))
+    remove_delete_download("!delete")
+    remove_delete_download("!download")

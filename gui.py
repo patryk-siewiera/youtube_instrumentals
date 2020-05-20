@@ -138,7 +138,7 @@ def gui_add10():
 def gui_download_exit():
     """gui button download: returns all data to youtube-dl module
     #TODO: youtube-dl module """
-    return [[sg.Submit(button_text="         Download        ", button_color=button_yes),
+    return [[sg.Submit(button_text="         Download        ", button_color=button_yes, key="Download"),
              sg.Button('           Exit           ', key='Exit', button_color=button_no)]]
 
 
@@ -381,11 +381,11 @@ def main():
         if event[-1] == "Help":
             gui_help()
 
-        if event[-1] == "Download":
-            return event
-
         if event[-1] in (None, 'Exit'):
             exit()
 
+        if event[-1] == "Download":
+            print(">>> gui, return here <<<")
+            return value
 
-main()
+
