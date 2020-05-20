@@ -1,5 +1,6 @@
-import PySimpleGUI as sg
+from youtube_dl import YoutubeDL
 import pprint
+import PySimpleGUI as sg
 
 # import youtube_dl
 
@@ -17,14 +18,21 @@ ydl_opts = {
 
 youtube_dl_opts = {}
 
-from youtube_dl import YoutubeDL
-
 video = "https://www.youtube.com/watch?v=MCRiUi28UpA"
-with YoutubeDL(youtube_dl_opts) as ydl:
-    info_dict = ydl.extract_info(video, download=False)
-    video_url = info_dict.get("url", None)
-    video_id = info_dict.get("id", None)
-    video_title = info_dict.get('title', None)
 
-pp = pprint.PrettyPrinter(depth=2)
-pp.pprint(info_dict)
+
+def pretty_print_results(result):
+    pp = pprint.PrettyPrinter(depth=2)
+    pp.pprint(result)
+
+
+def get_info(video):
+    with YoutubeDL(youtube_dl_opts) as ydl:
+        info_dict = ydl.extract_info(video, download=False)
+        video_url = info_dict.get("url", None)
+        video_id = info_dict.get("id", None)
+        video_title = info_dict.get('title', None)
+    return info_dict
+
+
+pretty_print_results(get_info(video))
