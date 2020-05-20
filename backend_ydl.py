@@ -74,13 +74,3 @@ def ydl(gui_output):
     #         youtube_dl.YoutubeDL(ydl_opts_wav).download([url[i]])
     #     except:
     #         print('EXCEPT: youtube-dl unsupported URL')
-    #
-
-
-# print(how_many_iterations(mock_gui_output_10))
-
-
-# clean_my_project.main()
-# ydl(mock_gui_output_10)
-gui_output = gui.main()
-ydl(gui_output)
