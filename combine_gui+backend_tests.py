@@ -80,7 +80,7 @@ def ydl(gui_output):
 # print(how_many_iterations(mock_gui_output_10))
 
 
-# gui_output = gui.main()
-clean_my_project.main()
+# clean_my_project.main()
 # ydl(mock_gui_output_10)
-# ydl(gui_output)
+gui_output = gui.main()
+ydl(gui_output)

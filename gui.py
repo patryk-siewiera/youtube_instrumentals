@@ -72,14 +72,15 @@ SETTINGS_KEYS_TO_ELEMENT_KEYS = {'theme': '-THEME-',
                                  'if_tunebat_using': '-IF_TUNEBAT_USING-', 'geo-bypass': '-GEO-BYPASS-', }
 
 
-def gui_help():
+def gui_help(event_list):
     """open website (django)"""
     sg.popup("""
     --- THIS WILL OPEN HELP PAGE ---
     """)
+    return event_list[:-1]
 
 
-def gui_about():
+def gui_about(event_list):
     """open popup: about information and libraries"""
     sg.popup("""
 
@@ -94,13 +95,15 @@ Used Python Packages:
 
 
 """, title="about", keep_on_top=True)
+    return event_list[:-1]
 
 
-def gui_github_page():
+def gui_github_page(event_list):
     """open webpage github with project"""
     url_git = 'https://github.com/patryk-siewiera/youtube_instrumentals'
     sg.popup_timed("\nOpening webpage: \n\n" + url_git + "\n", auto_close_duration=2, title="info")
     webbrowser.open_new_tab(url=url_git)
+    return event_list[:-1]
 
 
 # static parts of gui
@@ -373,13 +376,13 @@ def main():
             event, settings = change_settings(window, settings, event)
 
         if event[-1] == "About":
-            gui_about()
+            event = gui_about(event)
 
         if event[-1] == "GitHub Page":
-            gui_github_page()
+            event = gui_github_page(event)
 
         if event[-1] == "Help":
-            gui_help()
+            event = gui_help(event)
 
         if event[-1] in (None, 'Exit'):
             exit()
@@ -387,5 +390,3 @@ def main():
         if event[-1] == "Download":
             print(">>> gui, return here <<<")
             return value
-
-
