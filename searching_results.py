@@ -836,18 +836,17 @@ def get_info(video):
 
 
 # pretty_print_results(get_info(video))
-def frame(title, text):
+def frame(title, inside_text):
     output = []
-    """create one frame"""
-    sg_frame = "sg.Frame"
+
+    def one_frame(title, inside_text):
+        return [sg.Frame(title=title, layout=[[sg.Text(inside_text)]])]
+
     for i in range(len(title)):
-        # print(title[i], text[i])
-        inside = "(title=str(title[" + str(i) + "]), layout=[[sg.Text(str(text[" + str(i) + "]))]])"
-        output.append(str(inside))
-        # output.append()
-    # print(output)
-    # print(sg_frame + ",".join(output))
-    return [[sg.Frame(title, text)]]
+        output.append(one_frame(title[i], inside_text[i]))
+    # print(title)
+    print("\n\n\n\n\n", inside_text)
+    return output
 
 
 def create_window(data_input):
@@ -864,15 +863,7 @@ def create_window(data_input):
                            + "\nview_count:\t" + str(data["view_count"]) \
                            + "\n")
 
-        frame_layout = [
-            [sg.T(inside_text[0])],
-        ]
-
-    layout = [
-        [sg.Frame('My Frame Title', frame_layout, font='Any 12', title_color='blue')],
-    ]
-
-    window = sg.Window('Frame with buttons', layout, font=("Helvetica", 12))
+    window = sg.Window('Frame with buttons', layout=(frame(title, inside_text)), font=("Helvetica", 12))
     event, values = window.read()
     window.close()
 
