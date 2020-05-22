@@ -823,7 +823,7 @@ youtube_dl_opts = {}
 
 def pretty_print_results(result):
     pp = pprint.PrettyPrinter(depth=2)
-    pp.pprint(result)
+    return pp.pformat(result)
 
 
 def get_info(video):
@@ -849,6 +849,10 @@ def frame(title, inside_text):
     return output
 
 
+# TODO do list
+# def table(data):
+#     return [[sg.Table]]
+
 def create_window(data_input):
     output = []
     # add tags
@@ -857,13 +861,16 @@ def create_window(data_input):
     for j in range(len(data_input)):
         data = (data_input[j])
         title.append(data["artist"])
+        current_average = float(data["average_rating"]) / 5 * 100
         inside_text.append("\ntitle:\t\t" + data["title"] \
                            + "\nuploader_id:\t" + str(data["uploader_id"]) \
-                           + "\naverage rating:\t" + str(data["average_rating"]) \
+                           + "\naverage rating:\t" + str("{:.2f}").format(current_average) + " %" \
                            + "\nview_count:\t" + str(data["view_count"]) \
                            + "\n")
 
-    window = sg.Window('Frame with buttons', layout=(frame(title, inside_text)), font=("Helvetica", 12))
+    # activate frame here in layout =
+    window = sg.Window('Frame with buttons', layout=([[sg.Frame(layout=frame(title, inside_text), title="frame out")]]),
+                       font=("Helvetica", 12))
     event, values = window.read()
     window.close()
 
@@ -878,10 +885,30 @@ data = {
 # create_window(results_dictionary)
 
 video = ["https://www.youtube.com/watch?v=Pl46Qsk-Wvs",
-         "https://www.youtube.com/watch?v=-s58ryovTDc"]
+         "https://www.youtube.com/watch?v=-s58ryovTDc",
+         "https://www.youtube.com/watch?v=txezAqv-0Mg",
+         "https://www.youtube.com/watch?v=Rk0NIQfEXBA",
+         "https://www.youtube.com/watch?v=LjLn3H1_1Gw",
+         "https://www.youtube.com/watch?v=uYgxa_VMq0E",
+         "https://www.youtube.com/watch?v=YJVmu6yttiw"]
 
-# get_info_output = (get_info(video))
+
 # print(get_info_output)
 # get_info(video)
 # print(get_info_output[1]['title'])
-create_window(get_info_output)
+
+
+def save_results_file(file, results):
+    with open(file, 'w', encoding="utf-8") as f:
+        f.write(str(pretty_print_results(results)))
+
+
+output_real = (get_info(video))
+save_results_file("searching_results-SAMPLE1.txt", output_real)
+
+
+# pretty_print_results(output_real)
+
+
+# create_window(get_info_output)
+# create_window(output_real)
