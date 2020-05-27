@@ -22,6 +22,12 @@ def how_many_iterations(data):
     return int(len(data) / 3 - 1)
 
 
+def remove_ydl_cache():
+    ydl_opts_wav = {}
+    # remove cache
+    youtube_dl.YoutubeDL(ydl_opts_wav).cache.remove()
+
+
 def ydl(gui_output):
     iterations = how_many_iterations(gui_output)
 
@@ -74,3 +80,5 @@ def ydl(gui_output):
     #         youtube_dl.YoutubeDL(ydl_opts_wav).download([url[i]])
     #     except:
     #         print('EXCEPT: youtube-dl unsupported URL')
+
+
