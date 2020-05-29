@@ -15,24 +15,59 @@ ydl_opts = {
 }
 
 
-def pretty_print_results(result):
-    pp = pprint.PrettyPrinter(depth=2)
+def save_to_file(result):
+    """
+    PPrint input, and save to file !output.txt for better readability
+    """
+    # if depth to small, returns (...) and cut important data
+    pp = pprint.PrettyPrinter(depth=10)
     output = pp.pformat(result)
-    with open('output.txt', 'wt') as out:
-        pp.pprint(output, stream=out)
+    filename = "!output.txt"
+    open(filename, "w").write(output)
+    print("PPrint write to file: \t\t ", filename)
     return output
 
 
-def get_info(video):
+def get_info_all_list(video):
+    """
+    input:
+    [
+        [ query - tab name, url1, url2 ],
+        [ query - tab name, url3, url4 ],
+    ]
+
+
+    :return:
+    [
+        [ query - unchanged, info_url1, info_url2],
+        [ query - unchanged, info_url3, info_url4],
+    ]
+    """
+    YoutubeDL(ydl_opts).cache.remove()
     output = []
     for i in range(len(video)):
-        with YoutubeDL(ydl_opts) as ydl:
-            info_dict = ydl.extract_info(video[i], download=False)
-            try:
-                output.append(info_dict)
-            except:
-                pass
+        title_ = video[i][0]
+        print(title_)
+        output.insert(i, [title_])
+        output[i][0] = title_
+        for j in range(len(video[i])):
+            if j > 0:
+                link_current_iteration = video[i][j]
+                ydl_info_current = ydl_info_one_link(link_current_iteration)
+                output[i].insert(j, ydl_info_current)
+    save_to_file(output)
     return output
+
+
+def ydl_info_one_link(video):
+    """
+    take URL (str), and returns dict with informations
+    :param video: str url
+    :return: dict
+    """
+    with YoutubeDL(ydl_opts) as ydl:
+        info_dict = ydl.extract_info(video, download=False)
+    return info_dict
 
 
 def create_window(data_input):
@@ -72,8 +107,8 @@ def create_window(data_input):
 
     layout_content = frame(title, inside_text)
 
-    layout = layout = [
-        [sg.TabGroup([[sg.Tab('Tab 1', tab1, tooltip='tip'), sg.Tab('Tab 2', layout_content)]], tooltip='TIP2')],
+    layout = [
+        [sg.TabGroup([[sg.Tab('Tab 1', tab1, tooltip='tip'), sg.Tab('Tab 2', layout_content)]])],
         [sg.Button('Read')]]
 
     # activate frame here in layout =
@@ -83,26 +118,12 @@ def create_window(data_input):
     window.close()
 
 
-title = ["title", "53544823658", 2, 3, 4, 5]
-
-data = {
-    "title": title[1],
-    "inside_text": "inside_text xxx",
-    "number_of_frames": 1,
-}
-
-
-def output_to_file(output):
-    now = datetime.datetime.now()
-    print(output, file=open("!output.txt", "a"))
-
-    return output
-
-
 # TODO:
 # function save output searching to file -> for easier copying
 # do 5 sample data links -> from 1 to 10
 # do 5 sample already parsed information
 
 # backend_ydl.remove_ydl_cache()
-create_window((get_info(sample_data.link_sample_data4)))
+get_info_all_list(sample_data.nested_link_sample_data12_22)
+# create_window((get_info(sample_data.link_sample_data4)))
+# save_to_file(sample_data.searching_sample_values3)
