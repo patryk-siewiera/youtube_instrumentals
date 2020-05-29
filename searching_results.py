@@ -8,22 +8,22 @@ from youtube_dl import YoutubeDL
 import backend_ydl
 
 ydl_opts = {
-    "ignoreerrors": True,
+    "ignoreerrors": False,
     'sleep_interval': 5,
-    'geo-bypass': True,
+    'geo-bypass': False,
     'quiet': False
 }
 
 
-def save_to_file(result):
+def save_to_file(input_data):
     """
-    PPrint input, and save to file !output.txt for better readability
+    save input_data, in !output.txt file with pprint formatting
     """
     # if depth to small, returns (...) and cut important data
     pp = pprint.PrettyPrinter(depth=10)
-    output = pp.pformat(result)
+    output = pp.pformat(input_data)
     filename = "!output.txt"
-    open(filename, "w").write(output)
+    open(filename, "w", encoding="utf-8").write(output)
     print("PPrint write to file: \t\t ", filename)
     return output
 
@@ -61,13 +61,26 @@ def get_info_all_list(video):
 
 def ydl_info_one_link(video):
     """
-    take URL (str), and returns dict with informations
+    take URL (str), and returns dict with information
     :param video: str url
     :return: dict
     """
-    with YoutubeDL(ydl_opts) as ydl:
-        info_dict = ydl.extract_info(video, download=False)
-    return info_dict
+    i = 0
+
+    # retry 10 times before
+    def inside(video, i):
+        with YoutubeDL(ydl_opts) as ydl:
+            try:
+                info_dict = ydl.extract_info(video, download=False)
+            except:
+                i = i + 1
+                print("Retry: ", i)
+                if i >= 10:
+                    return None
+                inside(video, i)
+        return info_dict
+
+    return inside(video, i)
 
 
 def create_window(data_input):
@@ -124,6 +137,6 @@ def create_window(data_input):
 # do 5 sample already parsed information
 
 # backend_ydl.remove_ydl_cache()
-get_info_all_list(sample_data.nested_link_sample_data12_22)
+get_info_all_list(sample_data.nested_link_sample_data11_21_35)
 # create_window((get_info(sample_data.link_sample_data4)))
 # save_to_file(sample_data.searching_sample_values3)
