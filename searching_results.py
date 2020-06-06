@@ -84,59 +84,52 @@ def ydl_info_one_link(video):
 
 
 def create_window(data_input):
-    # pretty_print_results(get_info(video))
-    def frame(title, inside_text):
-        output = []
-
-        def one_frame(title, inside_text):
-            return [sg.Frame(title=title, layout=[[sg.Text(inside_text)]])]
-
-        for i in range(len(title)):
-            output.append(one_frame(title[i], inside_text[i]))
-        print("\n\n\n\n\n", inside_text)
-        return output
-
-    output = []
-    # add tags
-    title = []
-    inside_text = []
-    for j in range(len(data_input)):
-        data = (data_input[j])
-        try:
-            title.append(data["artist"])
-            current_average = float(data["average_rating"]) / 5 * 100
-            inside_text.append("\ntitle:\t\t" + data["title"] \
-                               + "\nuploader_id:\t" + str(data["uploader_id"]) \
-                               + "\naverage rating:\t" + str("{:.2f}").format(current_average) + " %" \
-                               + "\nview_count:\t" + str(data["view_count"]) \
-                               + "\n")
-        except:
-            pass
-
-    def tab(title, layout):
-        return sg.Tab(title=title, layout=layout)
-
-    tab1 = [[sg.T('This is inside tab 1')]]
-
-    layout_content = frame(title, inside_text)
+    """
+    parse information window for selected links
+    :param data_input:
+    :return: selected links
+    """
+    layout_content_tab1 = [[sg.T('This is inside ab 1')]]
+    layout_content_tab2 = [[sg.CB(' '), sg.T(unpack_data(data_input[0]))]]
 
     layout = [
-        [sg.TabGroup([[sg.Tab('Tab 1', tab1, tooltip='tip'), sg.Tab('Tab 2', layout_content)]])],
-        [sg.Button('Read')]]
+        [sg.TabGroup(
+            [[sg.Tab(title=data_input[0][0], layout=layout_content_tab1),
+              sg.Tab(title=data_input[1][0], layout=layout_content_tab2)]])],
+        [sg.Button('Ok')]]
 
     # activate frame here in layout =
     window = sg.Window('Frame with buttons', layout=layout,
                        font=("Arial", 8))
+
+    # output values from window
     event, values = window.read()
     window.close()
 
 
-# TODO:
-# function save output searching to file -> for easier copying
-# do 5 sample data links -> from 1 to 10
-# do 5 sample already parsed information
+def put_content_into_frame(content):
+    return [[sg.Frame(title="title", layout=[[sg.Text(content)]])]]
 
-# backend_ydl.remove_ydl_cache()
-get_info_all_list(sample_data.nested_link_sample_data11_21_35)
-# create_window((get_info(sample_data.link_sample_data4)))
-# save_to_file(sample_data.searching_sample_values3)
+
+def unpack_data(data):
+    '''
+    format data for easier reading
+    :param data: data parsed from get_info_all_list
+    :return:
+    '''
+    title = data[0]
+    inside_text = []
+    title = str(data[1]['title'])
+    uploader = str(data[1]['uploader'])
+    current_average = str("{:.2f}").format(float(data[1]["average_rating"]) / 5 * 100)
+    view_count = str(data[1]['view_count'])
+    output = ("title:\t\t" + title \
+              + "\nuploader:\t\t" + uploader \
+              + "\naverage rating:\t" + current_average + " %" \
+              + "\nview_count:\t" + view_count + "\n")
+
+    # output = put_content_into_frame(output)
+    return output
+
+
+create_window(sample_data.output_11_22)
