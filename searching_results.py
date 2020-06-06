@@ -90,7 +90,8 @@ def create_window(data_input):
     :return: selected links
     """
     layout_content_tab1 = [[sg.T('This is inside ab 1')]]
-    layout_content_tab2 = [[sg.CB(' '), sg.T(unpack_data(data_input[0]))]]
+    layout_content_tab2 = get_info_current_item(data_input[1]) + get_info_current_item(data_input[0])
+    # layout_content_tab2 = unpack_list(data_input[1])
 
     layout = [
         [sg.TabGroup(
@@ -107,11 +108,23 @@ def create_window(data_input):
     window.close()
 
 
+def unpack_list(data):
+    output = []
+    for i in range(len(data)):
+        output.append(get_info_current_item(data[i]))
+    output = "".join(output)
+    return output
+
+
+def create_layout(data):
+    return [[sg.CB('+', default=True), sg.T(data)]]
+
+
 def put_content_into_frame(content):
     return [[sg.Frame(title="title", layout=[[sg.Text(content)]])]]
 
 
-def unpack_data(data):
+def get_info_current_item(data):
     '''
     format data for easier reading
     :param data: data parsed from get_info_all_list
@@ -122,13 +135,15 @@ def unpack_data(data):
     title = str(data[1]['title'])
     uploader = str(data[1]['uploader'])
     current_average = str("{:.2f}").format(float(data[1]["average_rating"]) / 5 * 100)
-    view_count = str(data[1]['view_count'])
+    view_count = data[1]['view_count']
+    view_count = f"{view_count:013,}"
+    view_count = view_count.replace(",", " ")
     output = ("title:\t\t" + title \
               + "\nuploader:\t\t" + uploader \
               + "\naverage rating:\t" + current_average + " %" \
-              + "\nview_count:\t" + view_count + "\n")
+              + "\nview_count:\t" + view_count)
 
-    # output = put_content_into_frame(output)
+    output = create_layout(output)
     return output
 
 
