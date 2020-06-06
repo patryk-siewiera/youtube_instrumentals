@@ -89,9 +89,10 @@ def create_window(data_input):
     :param data_input:
     :return: selected links
     """
-    layout_content_tab1 = [[sg.T('This is inside ab 1')]]
-    layout_content_tab2 = get_info_current_item(data_input[1]) + get_info_current_item(data_input[0])
-    # layout_content_tab2 = unpack_list(data_input[1])
+    # layout_content_tab1 = [[sg.T('This is inside ab 1')]]
+    layout_content_tab1 = unpack_list(data_input[0])
+    # layout_content_tab2 = get_info_current_item(data_input[1]) + get_info_current_item(data_input[0])
+    layout_content_tab2 = unpack_list(data_input[1])
 
     layout = [
         [sg.TabGroup(
@@ -101,27 +102,29 @@ def create_window(data_input):
 
     # activate frame here in layout =
     window = sg.Window('Frame with buttons', layout=layout,
-                       font=("Arial", 8))
+                       font=("Calibri ", 8))
 
     # output values from window
     event, values = window.read()
     window.close()
 
 
-def unpack_list(data):
-    output = []
-    for i in range(len(data)):
-        output.append(get_info_current_item(data[i]))
-    output = "".join(output)
-    return output
-
-
 def create_layout(data):
+    # key for Checkbox -> url
+    # download all keys
     return [[sg.CB('+', default=True), sg.T(data)]]
 
 
 def put_content_into_frame(content):
     return [[sg.Frame(title="title", layout=[[sg.Text(content)]])]]
+
+
+def unpack_list(data):
+    output = ""
+    print(data[1])
+    # for i in range(len(data)):
+    #     output = str(output) + str(get_info_current_item(data[i]))
+    return get_info_current_item(data)
 
 
 def get_info_current_item(data):
@@ -130,21 +133,25 @@ def get_info_current_item(data):
     :param data: data parsed from get_info_all_list
     :return:
     '''
-    title = data[0]
-    inside_text = []
-    title = str(data[1]['title'])
-    uploader = str(data[1]['uploader'])
-    current_average = str("{:.2f}").format(float(data[1]["average_rating"]) / 5 * 100)
-    view_count = data[1]['view_count']
-    view_count = f"{view_count:013,}"
-    view_count = view_count.replace(",", " ")
-    output = ("title:\t\t" + title \
-              + "\nuploader:\t\t" + uploader \
-              + "\naverage rating:\t" + current_average + " %" \
-              + "\nview_count:\t" + view_count)
+    output = ""
+    for i in range(len(data) - 1):
+        i = i + 1
+        title = str(data[i]['title'])
+        uploader = str(data[i]['uploader'])
+        current_average = str("{:.2f}").format(float(data[1]["average_rating"]) / 5 * 100)
+        view_count = data[i]['view_count']
+        view_count = f"{view_count:1,}"
+        view_count = view_count.replace(",", " ")
+        webpage_url_key = data[i]['webpage_url']
+        output = str(output) + str("\ntitle:\t\t" + title \
+                                   + "\nuploader:\t\t" + uploader \
+                                   + "\nlike / dislike ratio:\t" + current_average + " %" \
+                                   + "\nview_count:\t" + view_count+"\n")
 
     output = create_layout(output)
     return output
 
 
-create_window(sample_data.output_11_22)
+# create_window(sample_data.output_13_22_32)
+create_window(sample_data.output_14_23_24_skrillex_tameimpala_hole)
+# get_info_all_list(sample_data.nested_link_sample_data14_23_24_skrillex_tameimpala_hole)
