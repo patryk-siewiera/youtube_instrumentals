@@ -98,8 +98,9 @@ def create_window(data_input):
         [sg.TabGroup(
             [[sg.Tab(title=data_input[0][0], layout=layout_content_tab1),
               sg.Tab(title=data_input[1][0], layout=layout_content_tab2)]])],
-        [sg.Button('Ok')]]
+        [sg.Button('Download selected')]]
 
+    sg.theme('dark')
     # activate frame here in layout =
     window = sg.Window('Frame with buttons', layout=layout,
                        font=("Calibri ", 8))
@@ -109,22 +110,21 @@ def create_window(data_input):
     window.close()
 
 
-def create_layout(data):
-    # key for Checkbox -> url
-    # download all keys
-    return [[sg.CB('+', default=True), sg.T(data)]]
-
-
-def put_content_into_frame(content):
-    return [[sg.Frame(title="title", layout=[[sg.Text(content)]])]]
+def put_content_into_frame(content, key):
+    return [[sg.Frame(title="title", key=key, layout=[[sg.Text(content)]])]]
 
 
 def unpack_list(data):
     output = ""
-    print(data[1])
     # for i in range(len(data)):
     #     output = str(output) + str(get_info_current_item(data[i]))
     return get_info_current_item(data)
+
+
+def create_layout(data, key):
+    # key for Checkbox -> url
+    # download all keys
+    return [sg.CB('+', default=True, key=key), sg.T(data)]
 
 
 def get_info_current_item(data):
@@ -134,22 +134,22 @@ def get_info_current_item(data):
     :return:
     '''
     output = ""
+    output_list = []
     for i in range(len(data) - 1):
         i = i + 1
         title = str(data[i]['title'])
         uploader = str(data[i]['uploader'])
-        current_average = str("{:.2f}").format(float(data[1]["average_rating"]) / 5 * 100)
+        current_average = str("{:.2f}").format(float(data[i]["average_rating"]) / 5 * 100)
         view_count = data[i]['view_count']
         view_count = f"{view_count:1,}"
         view_count = view_count.replace(",", " ")
         webpage_url_key = data[i]['webpage_url']
-        output = str(output) + str("\ntitle:\t\t" + title \
-                                   + "\nuploader:\t\t" + uploader \
-                                   + "\nlike / dislike ratio:\t" + current_average + " %" \
-                                   + "\nview_count:\t" + view_count+"\n")
-
-    output = create_layout(output)
-    return output
+        output = str("\ntitle:\t\t" + title \
+                     + "\nuploader:\t\t" + uploader \
+                     + "\nlike / dislike ratio:\t" + current_average + " %" \
+                     + "\nview_count:\t" + view_count + "\n")
+        output_list = output_list + create_layout(output, webpage_url_key)
+    return [output_list]
 
 
 # create_window(sample_data.output_13_22_32)
