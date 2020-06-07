@@ -84,24 +84,46 @@ def ydl_info_one_link(video):
     return inside(video, i)
 
 
+def tab(title, layout):
+    return sg.Tab(title=title, layout=layout)
+
+
+def layout_generator(data):
+    tab_names = []
+    unpack = []
+    for tab_count in range(len(data)):
+        tab_names.append(data[tab_count][0])
+    for j in range(len(data)):
+        unpack.append(unpack_list(data[j]))
+    print(tab_names)
+    print(unpack)
+
+    inside_list = []
+
+    def inside_layout(tab_names, unpack):
+        for i in range(len(tab_names)):
+            inside_list.append(tab(tab_names[i], unpack[i]))
+        return inside_list
+
+    inside_list = inside_layout(tab_names, unpack)
+
+    layout = [
+        [sg.TabGroup([inside_list])],
+        [sg.Button('Download selected')]]
+    return layout
+
+
 def create_window(data_input):
     """
     parse information window for selected links
     :param data_input:
     :return: selected links
     """
-    # layout_content_tab1 = [[sg.T('This is inside ab 1')]]
-    layout_content_tab1 = unpack_list(data_input[0])
-    # layout_content_tab2 = get_info_current_item(data_input[1]) + get_info_current_item(data_input[0])
-    layout_content_tab2 = unpack_list(data_input[1])
-
-    layout = [
-        [sg.TabGroup(
-            [[sg.Tab(title=data_input[0][0], layout=layout_content_tab1),
-              sg.Tab(title=data_input[1][0], layout=layout_content_tab2)]])],
-        [sg.Button('Download selected')]]
 
     sg.theme('dark')
+
+    # unpack all of data
+    layout = layout_generator(data_input)
     # activate frame here in layout =
     window = sg.Window('Frame with buttons', layout=layout,
                        font=("Calibri ", 8))
@@ -145,11 +167,12 @@ def get_info_current_item(data):
     '''
     output = ""
     output_list = []
+    max_length = 55  # cut longer strings than, to make window smaller
     for i in range(len(data) - 1):
         i = i + 1
-        title = str(data[i]['title'])
-        uploader = str(data[i]['uploader'])
-        current_average = str("{:.2f}").format(float(data[i]["average_rating"]) / 5 * 100)
+        title = str(data[i]['title'])[:max_length]
+        uploader = str(data[i]['uploader'])[:max_length]
+        current_average = str("{:.2f}").format(float(data[i]["average_rating"]) / 5 * 100)[:max_length]
         view_count = data[i]['view_count']
         view_count = f"{view_count:1,}"
         view_count = view_count.replace(",", " ")
@@ -165,3 +188,4 @@ def get_info_current_item(data):
 # create_window(sample_data.output_13_22_32)
 # get_info_all_list(sample_data.nested_link_sample_data14_23_24_skrillex_tameimpala_hole)
 print(create_window(sample_data.output_14_23_24_skrillex_tameimpala_hole))
+# create_window(get_info_all_list(sample_data.nested_link_sample_data14_23_24_skrillex_tameimpala_hole))
