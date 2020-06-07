@@ -1,5 +1,6 @@
 import datetime
 import pprint
+import validators
 
 import sample_data
 import PySimpleGUI as sg
@@ -105,9 +106,18 @@ def create_window(data_input):
     window = sg.Window('Frame with buttons', layout=layout,
                        font=("Calibri ", 8))
 
-    # output values from window
+    # put output from window to variable, values
     event, values = window.read()
+
+    # windows return what link to download, here take only with TRUE and returns it
+    link_list = []
+    for link, bool_checkbox_downloading in values.items():
+        if bool_checkbox_downloading:
+            if validators.url(str(link)):
+                link_list.append(link)
+
     window.close()
+    return link_list
 
 
 def put_content_into_frame(content, key):
@@ -153,5 +163,5 @@ def get_info_current_item(data):
 
 
 # create_window(sample_data.output_13_22_32)
-create_window(sample_data.output_14_23_24_skrillex_tameimpala_hole)
 # get_info_all_list(sample_data.nested_link_sample_data14_23_24_skrillex_tameimpala_hole)
+print(create_window(sample_data.output_14_23_24_skrillex_tameimpala_hole))
