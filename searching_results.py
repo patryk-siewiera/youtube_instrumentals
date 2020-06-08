@@ -187,5 +187,5 @@ def get_info_current_item(data):
 
 # create_window(sample_data.output_13_22_32)
 # get_info_all_list(sample_data.nested_link_sample_data14_23_24_skrillex_tameimpala_hole)
-print(create_window(sample_data.output_14_23_24_skrillex_tameimpala_hole))
-# create_window(get_info_all_list(sample_data.nested_link_sample_data14_23_24_skrillex_tameimpala_hole))
+# print(create_window(sample_data.output_14_23_24_skrillex_tameimpala_hole))
+create_window(get_info_all_list(sample_data.nested_link_sample_data14_23_24_skrillex_tameimpala_hole))
