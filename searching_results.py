@@ -1,5 +1,7 @@
 import datetime
 import pprint
+from pprint import pp
+
 import validators
 
 import sample_data
@@ -85,8 +87,8 @@ def ydl_info_one_link(video):
     return inside(video, i)
 
 
-def tab(title, layout):
-    return sg.Tab(title=title, layout=layout, title_color='red')
+def tab_group_generator(title, layout):
+    return sg.Tab(title=title, layout=[[sg.Frame("inside tabs frame", layout)]])
 
 
 def layout_generator(data):
@@ -94,24 +96,30 @@ def layout_generator(data):
     unpack = []
     for tab_count in range(len(data)):
         tab_names.append(data[tab_count][0])
+
+    # TODO: here change to vertical output in frames
     for j in range(len(data)):
         unpack.append(unpack_list(data[j]))
-    print(tab_names)
-    print(unpack)
 
     inside_list = []
 
     def inside_layout(tab_names, unpack):
+        """
+        create layout for inside of every tab
+        """
         for i in range(len(tab_names)):
-            inside_list.append(tab(tab_names[i], unpack[i]))
+            inside_list.append(tab_group_generator(tab_names[i], unpack[i]))
         return inside_list
 
     inside_list = inside_layout(tab_names, unpack)
 
-    layout = [
+    outside_layout = [
         [sg.TabGroup([inside_list])],
         [sg.Button('Download selected')]]
-    return layout
+
+    # pprint.pprint(inside_list)
+
+    return outside_layout
 
 
 def create_window(data_input):
@@ -126,7 +134,7 @@ def create_window(data_input):
     # unpack all of data
     layout = layout_generator(data_input)
     # activate frame here in layout =
-    window = sg.Window('Frame with buttons', layout=layout,
+    window = sg.Window('Download selected tracks', layout=layout,
                        font=("Calibri ", 8))
 
     # put output from window to variable, values
@@ -151,6 +159,7 @@ def unpack_list(data):
     output = ""
     # for i in range(len(data)):
     #     output = str(output) + str(get_info_current_item(data[i]))
+    # return get_info_current_item(data)
     return get_info_current_item(data)
 
 
@@ -182,9 +191,13 @@ def get_info_current_item(data):
                      + "\nuploader:\t\t" + uploader \
                      + "\nlike / dislike ratio:\t" + current_average + " %" \
                      + "\nview_count:\t" + view_count + "\n")
-        output_list = output_list + create_layout(output, webpage_url_key)
-    return [output_list]
+
+        # modify this line to vertical
+        output_list = output_list + [create_layout(output, webpage_url_key)]
+        # output_list.append(create_layout(output, webpage_url_key))
+    return output_list
 
 
-# create_window(get_info_all_list(sample_data.nested_link_sample_data14_23_24_skrillex_tameimpala_hole))
-create_window(sample_data.output_14_23_24_skrillex_tameimpala_hole)
+# create_window(get_info_all_list(sample_data.nested_link_sample_data19_28_37_41_boneym_azealiabanks_audioslave_sanah))
+# create_window(sample_data.output_14_23_24_skrillex_tameimpala_hole)
+create_window(sample_data.output_19_28_37_41_boneym_azealiabanks_audioslave_sanah)
