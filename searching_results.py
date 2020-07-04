@@ -3,6 +3,7 @@ import pprint
 import validators
 
 import sample_data
+# from . import sample_data
 import PySimpleGUI as sg
 from youtube_dl import YoutubeDL
 
@@ -85,7 +86,7 @@ def ydl_info_one_link(video):
 
 
 def tab(title, layout):
-    return sg.Tab(title=title, layout=layout)
+    return sg.Tab(title=title, layout=layout, title_color='red')
 
 
 def layout_generator(data):
@@ -185,7 +186,5 @@ def get_info_current_item(data):
     return [output_list]
 
 
-# create_window(sample_data.output_13_22_32)
-# get_info_all_list(sample_data.nested_link_sample_data14_23_24_skrillex_tameimpala_hole)
-# print(create_window(sample_data.output_14_23_24_skrillex_tameimpala_hole))
-create_window(get_info_all_list(sample_data.nested_link_sample_data14_23_24_skrillex_tameimpala_hole))
+# create_window(get_info_all_list(sample_data.nested_link_sample_data14_23_24_skrillex_tameimpala_hole))
+create_window(sample_data.output_14_23_24_skrillex_tameimpala_hole)
