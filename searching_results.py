@@ -163,10 +163,12 @@ def unpack_list(data):
     return get_info_current_item(data)
 
 
-def create_layout(data, key):
-    # key for Checkbox -> url
-    # download all keys
-    return [sg.CB('+', default=True, key=key), sg.T(data)]
+def checkbox_per_track(data, key):
+    """
+    \n\n+\n\n -> don't need to click precise in checkbox - whole box is clickable
+    :return: one checkbox element - track
+    """
+    return [sg.Checkbox("\n\n+\n\n", default=True, key=key, size=(1, 5)), sg.T(data, size=(60, 5))]
 
 
 def get_info_current_item(data):
@@ -187,13 +189,13 @@ def get_info_current_item(data):
         view_count = f"{view_count:1,}"
         view_count = view_count.replace(",", " ")
         webpage_url_key = data[i]['webpage_url']
-        output = str("\ntitle:\t\t" + title \
+        output = str("title:\t\t" + title \
                      + "\nuploader:\t\t" + uploader \
                      + "\nlike / dislike ratio:\t" + current_average + " %" \
                      + "\nview_count:\t" + view_count + "\n")
 
         # modify this line to vertical
-        output_list = output_list + [create_layout(output, webpage_url_key)]
+        output_list = output_list + [checkbox_per_track(output, webpage_url_key)]
         # output_list.append(create_layout(output, webpage_url_key))
     return output_list
 
