@@ -87,6 +87,30 @@ def ydl_info_one_link(video):
     return inside(video, i)
 
 
+def progress_bar():
+    # TODO: continue here, merge two functions to one
+    # layout the Window
+    layout = [[sg.Text('A custom progress meter')],
+              [sg.ProgressBar(1000, orientation='h', size=(20, 20), key='progbar')],
+              [sg.Output(size=(50, 10), key='-OUTPUT-')],
+              [sg.Cancel()]]
+
+    # create the Window
+    window = sg.Window('Custom Progress Meter', layout)
+
+    # loop that would normally do something useful
+    for i in range(1000):
+        # check to see if the cancel button was clicked and exit loop if clicked
+        event, values = window.read(timeout=0)
+        print("output sample")
+        if event == 'Cancel' or event == sg.WIN_CLOSED:
+            break
+            # update bar with loop value +1 so that bar eventually reaches the maximum
+        window['progbar'].update_bar(i + 1)
+    # done with loop... need to destroy the window as it's still open
+    window.close()
+
+
 def tab_group_generator(title, layout):
     return sg.Tab(title=title, layout=[[sg.Frame("inside tabs frame", layout)]])
 
@@ -179,7 +203,7 @@ def get_info_current_item(data):
     '''
     output = ""
     output_list = []
-    max_length = 55  # cut longer strings than, to make window smaller
+    max_length = 50  # cut longer strings than, to make window smaller
     for i in range(len(data) - 1):
         i = i + 1
         title = str(data[i]['title'])[:max_length]
@@ -202,5 +226,5 @@ def get_info_current_item(data):
 
 # create_window(get_info_all_list(sample_data.nested_link_sample_data19_28_37_41_boneym_azealiabanks_audioslave_sanah))
 # create_window(sample_data.output_14_23_24_skrillex_tameimpala_hole)
-create_window(sample_data.output_19_28_37_41_boneym_azealiabanks_audioslave_sanah)
-
+progress_bar()
+# print(create_window(sample_data.output_19_28_37_41_boneym_azealiabanks_audioslave_sanah))
