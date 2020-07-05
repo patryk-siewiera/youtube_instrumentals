@@ -5,6 +5,7 @@ from pprint import pp
 import validators
 
 import sample_data
+import sample_output
 # from . import sample_data
 import PySimpleGUI as sg
 from youtube_dl import YoutubeDL
@@ -47,19 +48,43 @@ def get_info_all_list(video):
         [ query - unchanged, info_url3, info_url4],
     ]
     """
+    sg.theme('dark')
+    progress_bar_steps = 0
+    for _ in range(len(video)):
+        for __ in range(len(video[_])):
+            progress_bar_steps = progress_bar_steps + 1
+    print('progress bar steps: ', progress_bar_steps)
+
+    layout = [[sg.ProgressBar(progress_bar_steps, orientation='h', size=(70, 15), key='progbar')]]
+
+    # create the Window
+    window = sg.Window('Searching for more details...', layout)
+
     YoutubeDL(ydl_opts).cache.remove()
+
     output = []
+
+    progress_count = 0
     for i in range(len(video)):
+        event, values = window.read(timeout=0)
         title_ = video[i][0]
         print(title_)
         output.insert(i, [title_])
         output[i][0] = title_
+
         for j in range(len(video[i])):
+            if event == 'Cancel' or event == sg.WIN_CLOSED:
+                break
             if j > 0:
                 link_current_iteration = video[i][j]
                 ydl_info_current = ydl_info_one_link(link_current_iteration)
                 output[i].insert(j, ydl_info_current)
+            window['progbar'].update_bar(progress_count)
+            progress_count = progress_count + 1
     save_to_file(output)
+
+    window.close()
+
     return output
 
 
@@ -90,6 +115,7 @@ def ydl_info_one_link(video):
 def progress_bar():
     # TODO: continue here, merge two functions to one
     # layout the Window
+
     layout = [[sg.Text('A custom progress meter')],
               [sg.ProgressBar(1000, orientation='h', size=(20, 20), key='progbar')],
               [sg.Output(size=(50, 10), key='-OUTPUT-')],
@@ -139,7 +165,8 @@ def layout_generator(data):
 
     outside_layout = [
         [sg.TabGroup([inside_list])],
-        [sg.Button('Download selected')]]
+        [sg.Button('Download selected'), sg.T("\t\t"), sg.Button('Sort by: Views'),
+         sg.Button('Sort by: Like / Dislike')]]
 
     # pprint.pprint(inside_list)
 
@@ -225,6 +252,7 @@ def get_info_current_item(data):
 
 
 # create_window(get_info_all_list(sample_data.nested_link_sample_data19_28_37_41_boneym_azealiabanks_audioslave_sanah))
-# create_window(sample_data.output_14_23_24_skrillex_tameimpala_hole)
-progress_bar()
+# create_window(get_info_all_list(sample_data.nested_link_sample_data14_23_24_skrillex_tameimpala_hole))
+create_window(sample_output.output_14_23_24_skrillex_tameimpala_hole)
+# progress_bar()
 # print(create_window(sample_data.output_19_28_37_41_boneym_azealiabanks_audioslave_sanah))
