@@ -27,9 +27,9 @@ def save_to_file(input_data):
     # if depth to small, returns (...) and cut important data
     pp = pprint.PrettyPrinter(depth=10)
     output = pp.pformat(input_data)
-    filename = "!output.txt"
+    filename = "data/!output__searching_results_PY.txt"
     open(filename, "w", encoding="utf-8").write(output)
-    print("PPrint write to file: \t\t ", filename)
+    print("\nRaw youtube data in file (PPrint):\n", filename, "\n")
     return output
 
 
@@ -53,9 +53,9 @@ def get_info_all_list(video):
     for _ in range(len(video)):
         for __ in range(len(video[_])):
             progress_bar_steps = progress_bar_steps + 1
-    print('progress bar steps: ', progress_bar_steps)
+    # print('progress bar steps: ', progress_bar_steps)
 
-    layout = [[sg.ProgressBar(progress_bar_steps, orientation='h', size=(70, 15), key='progbar')]]
+    layout = [[sg.ProgressBar(progress_bar_steps, orientation='h', size=(70, 20), key='progbar')]]
 
     # create the Window
     window = sg.Window('Searching for more details...', layout)
@@ -68,7 +68,7 @@ def get_info_all_list(video):
     for i in range(len(video)):
         event, values = window.read(timeout=0)
         title_ = video[i][0]
-        print(title_)
+        print("\nquery name: ", title_)
         output.insert(i, [title_])
         output[i][0] = title_
 
@@ -109,7 +109,12 @@ def ydl_info_one_link(video):
                 inside(video, i)
         return info_dict
 
-    return inside(video, i)
+    try:
+        output = inside(video, i)
+    except:
+        pass
+
+    return output
 
 
 def progress_bar():
@@ -165,8 +170,7 @@ def layout_generator(data):
 
     outside_layout = [
         [sg.TabGroup([inside_list])],
-        [sg.Button('Download selected'), sg.T("\t\t"), sg.Button('Sort by: Views'),
-         sg.Button('Sort by: Like / Dislike')]]
+        [sg.Button('Download selected')]]
 
     # pprint.pprint(inside_list)
 
@@ -251,4 +255,4 @@ def get_info_current_item(data):
     return output_list
 
 
-create_window(get_info_all_list(sample_links.nested_link_sample_data19_28_37_41_boneym_azealiabanks_audioslave_sanah))
+create_window(get_info_all_list(sample_links.nested_link_sample_data12_22))

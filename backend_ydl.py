@@ -67,18 +67,3 @@ def ydl(gui_output):
             youtube_dl.YoutubeDL(ydl_opts_wav).extract_info(query)
         except:
             print('EXCEPT: youtube-dl unsupported keyword')
-
-    # url = url_keyword[0]
-    # keyword = url_keyword[1]
-
-    # TODO: map out incoming data
-
-    # print('\n_* def ydl(): INPUT url== ', url)
-    # for i in range(len(url)):
-    #     print('\ndownload: ', url[i])
-    #     try:
-    #         youtube_dl.YoutubeDL(ydl_opts_wav).download([url[i]])
-    #     except:
-    #         print('EXCEPT: youtube-dl unsupported URL')
-
-
