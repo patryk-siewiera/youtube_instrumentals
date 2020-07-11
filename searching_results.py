@@ -4,8 +4,8 @@ from pprint import pp
 
 import validators
 
-import sample_data
-import sample_output
+from data import sample_links
+
 # from . import sample_data
 import PySimpleGUI as sg
 from youtube_dl import YoutubeDL
@@ -251,8 +251,4 @@ def get_info_current_item(data):
     return output_list
 
 
-# create_window(get_info_all_list(sample_data.nested_link_sample_data19_28_37_41_boneym_azealiabanks_audioslave_sanah))
-# create_window(get_info_all_list(sample_data.nested_link_sample_data14_23_24_skrillex_tameimpala_hole))
-create_window(sample_output.output_14_23_24_skrillex_tameimpala_hole)
-# progress_bar()
-# print(create_window(sample_data.output_19_28_37_41_boneym_azealiabanks_audioslave_sanah))
+create_window(get_info_all_list(sample_links.nested_link_sample_data19_28_37_41_boneym_azealiabanks_audioslave_sanah))
