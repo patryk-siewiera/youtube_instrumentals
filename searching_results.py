@@ -4,9 +4,10 @@ import pprint
 import PySimpleGUI as sg
 import validators
 from youtube_dl import YoutubeDL
+from data import sample_links
 
 ydl_opts = {
-    "ignoreerrors": False,
+    "ignoreerrors": True,
     'sleep_interval': 5,
     'geo-bypass': False,
     'quiet': False
@@ -78,7 +79,7 @@ def get_info_all_list(video):
 
     window.close()
 
-    create_window(output)
+    output = create_window(output)
 
     return output
 
@@ -249,5 +250,5 @@ def get_info_current_item(data):
         # output_list.append(create_layout(output, webpage_url_key))
     return output_list
 
-# output_get = get_info_all_list(sample_links.nested_link_sample_data12_22)
-# print('\n\nthis is output get:', output_get)
+
+print(get_info_all_list(sample_links.nested_link_sample_data12))
