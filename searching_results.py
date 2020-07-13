@@ -1,16 +1,9 @@
-import datetime
 import pprint
-from pprint import pp
-
-import validators
-
-from data import sample_links
 
 # from . import sample_data
 import PySimpleGUI as sg
+import validators
 from youtube_dl import YoutubeDL
-
-import backend_ydl
 
 ydl_opts = {
     "ignoreerrors": False,
@@ -84,6 +77,8 @@ def get_info_all_list(video):
     save_to_file(output)
 
     window.close()
+
+    create_window(output)
 
     return output
 
@@ -254,5 +249,5 @@ def get_info_current_item(data):
         # output_list.append(create_layout(output, webpage_url_key))
     return output_list
 
-
-create_window(get_info_all_list(sample_links.nested_link_sample_data12_22))
+# output_get = get_info_all_list(sample_links.nested_link_sample_data12_22)
+# print('\n\nthis is output get:', output_get)
