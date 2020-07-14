@@ -37,9 +37,10 @@ mock_gui_output_banks_audioslave_sonlux_jamesblake = {0: None, 10: 'banks', 11: 
                                                       102: '1: Without Separation : Whole track',
                                                       '-DEFAULT_FOLDER-': 'C:\\!\\git\\youtube_instrumentals\\!download',
                                                       'Browse': ''}
-# options for youtube_dl
-# simulate: true -> this will only gather information
+
 ydl_opts_wav = {
+    # options for youtube_dl
+    # simulate: true -> this will only gather information
     'format': 'bestaudio/best',
     'outtmpl': '!download/%(uploader)s/%(title)s.%(ext)s',
     'min_views': 10000,
@@ -55,32 +56,16 @@ ydl_opts_wav = {
 }
 
 
-def tracks_combined_number(data):
-    """
-    :return: number of all tracks from all artists,
-    for ex flume 2, skrillex 3 -> this will return 5 (int)
-    """
-    return int(len(data) / 3 - 1)
-
-
-def remove_ydl_cache():
-    """
-    unfinished downloads from past may cause errors,
-    it's safer to remove cache downloads - this remove possibility of continue downloads that was unfinished
-    """
-    # youtube_dl require some arguments, this won't be passed further
-    ydl_opts_wav = {}
-    # remove cache
-    youtube_dl.YoutubeDL(ydl_opts_wav).cache.remove()
-
-
-global_artists_name = []
-
-
 def ydl(gui_output):
-    iterations = tracks_combined_number(gui_output)
+    #     number of all tracks from all artists,
+    #     for ex flume 2, skrillex 3 -> this will return 5 (int)
+    iterations = int(len(gui_output) / 3 - 1)
 
     # remove cache
+
+    # unfinished downloads from past may cause errors,
+    # it's safer to remove cache downloads - this remove possibility of continue downloads that was unfinished
+
     youtube_dl.YoutubeDL(ydl_opts_wav).cache.remove()
 
     for k in range(iterations):
@@ -124,6 +109,9 @@ def ydl(gui_output):
             print('************** EXCEPT: youtube-dl unsupported keyword')
 
     return global_artists_name
+
+
+global_artists_name = []
 
 # output_backend = ydl(mock_gui_output_1)
 # print(output_backend)

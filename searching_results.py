@@ -1,6 +1,5 @@
 import pprint
 
-# from . import sample_data
 import PySimpleGUI as sg
 import validators
 from youtube_dl import YoutubeDL
@@ -12,19 +11,6 @@ ydl_opts = {
     'geo-bypass': False,
     'quiet': False
 }
-
-
-def save_to_file(input_data):
-    """
-    save input_data, in !output.txt file with pprint formatting
-    """
-    # if depth to small, returns (...) and cut important data
-    pp = pprint.PrettyPrinter(depth=10)
-    output = pp.pformat(input_data)
-    filename = "data/!output__searching_results_PY.txt"
-    open(filename, "w", encoding="utf-8").write(output)
-    print("\nRaw youtube data in file (PPrint):\n", filename, "\n")
-    return output
 
 
 def get_info_all_list(video):
@@ -42,12 +28,12 @@ def get_info_all_list(video):
         [ query - unchanged, info_url3, info_url4],
     ]
     """
-    sg.theme('dark')
+
+    progress_count = 0
     progress_bar_steps = 0
     for _ in range(len(video)):
         for __ in range(len(video[_])):
             progress_bar_steps = progress_bar_steps + 1
-    # print('progress bar steps: ', progress_bar_steps)
 
     layout = [[sg.ProgressBar(progress_bar_steps, orientation='h', size=(70, 20), key='progbar')]]
 
@@ -58,7 +44,6 @@ def get_info_all_list(video):
 
     output = []
 
-    progress_count = 0
     for i in range(len(video)):
         event, values = window.read(timeout=0)
         title_ = video[i][0]
@@ -113,31 +98,6 @@ def ydl_info_one_link(video):
     return output
 
 
-def progress_bar():
-    # TODO: continue here, merge two functions to one
-    # layout the Window
-
-    layout = [[sg.Text('A custom progress meter')],
-              [sg.ProgressBar(1000, orientation='h', size=(20, 20), key='progbar')],
-              [sg.Output(size=(50, 10), key='-OUTPUT-')],
-              [sg.Cancel()]]
-
-    # create the Window
-    window = sg.Window('Custom Progress Meter', layout)
-
-    # loop that would normally do something useful
-    for i in range(1000):
-        # check to see if the cancel button was clicked and exit loop if clicked
-        event, values = window.read(timeout=0)
-        print("output sample")
-        if event == 'Cancel' or event == sg.WIN_CLOSED:
-            break
-            # update bar with loop value +1 so that bar eventually reaches the maximum
-        window['progbar'].update_bar(i + 1)
-    # done with loop... need to destroy the window as it's still open
-    window.close()
-
-
 def tab_group_generator(title, layout):
     return sg.Tab(title=title, layout=[[sg.Frame("inside tabs frame", layout)]])
 
@@ -150,7 +110,7 @@ def layout_generator(data):
 
     # TODO: here change to vertical output in frames
     for j in range(len(data)):
-        unpack.append(unpack_list(data[j]))
+        unpack.append(info_current_item(data[j]))
 
     inside_list = []
 
@@ -203,15 +163,13 @@ def create_window(data_input):
 
 
 def put_content_into_frame(content, key):
+    """
+    this MAY BE used later as column generator
+    when dealing with a lot of files to download
+    rows x columns
+    right now only one column
+    """
     return [[sg.Frame(title="title", key=key, layout=[[sg.Text(content)]])]]
-
-
-def unpack_list(data):
-    output = ""
-    # for i in range(len(data)):
-    #     output = str(output) + str(get_info_current_item(data[i]))
-    # return get_info_current_item(data)
-    return get_info_current_item(data)
 
 
 def checkbox_per_track(data, key):
@@ -222,7 +180,20 @@ def checkbox_per_track(data, key):
     return [sg.Checkbox("\n\n+\n\n", default=True, key=key, size=(1, 5)), sg.T(data, size=(60, 5))]
 
 
-def get_info_current_item(data):
+def save_to_file(input_data):
+    """
+    save input_data, in !output__searching_results_PY.txt file with pprint formatting
+    """
+    # if depth to small, returns (...) and cut important data
+    pp = pprint.PrettyPrinter(depth=10)
+    output = pp.pformat(input_data)
+    filename = "data/!output__searching_results_PY.txt"
+    open(filename, "w", encoding="utf-8").write(output)
+    print("\nRaw youtube data in file (PPrint):\n", filename, "\n")
+    return output
+
+
+def info_current_item(data):
     '''
     format data for easier reading
     :param data: data parsed from get_info_all_list
@@ -249,6 +220,5 @@ def get_info_current_item(data):
         output_list = output_list + [checkbox_per_track(output, webpage_url_key)]
         # output_list.append(create_layout(output, webpage_url_key))
     return output_list
-
 
 # print(get_info_all_list(sample_links.nested_link_sample_data12))

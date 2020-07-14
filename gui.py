@@ -8,7 +8,7 @@ import PySimpleGUI as sg
 cwd = "{0}\\!download".format(os.getcwd())
 
 # size of each row
-row1 = (40, 1)  # keywords
+row1 = (50, 1)  # keywords
 row2 = (10, 1)  # how much
 row3 = (50, 1)  # method selection
 output_row = (80, 1)  # folder output
@@ -114,7 +114,7 @@ def gui_menu():
 
 def gui_info_row():
     """add information about every row """
-    return [[sg.Text('Keywords, Link or Local File Url', size=(35, 1), key="11"), sg.Text('How much', size=(10, 1)),
+    return [[sg.Text('Keywords, Link or Local File Url', size=(44, 1), key="11"), sg.Text('How much', size=(10, 1)),
              sg.Text('Method 1/2/4/5')]]
 
 
