@@ -41,4 +41,4 @@ def main():
     move_files('.ytdl', create_folder('!delete'))
     move_files('.wav', create_folder('!delete'))
     remove_delete_download("!delete")
-    remove_delete_download("!download")
+    remove_delete_download("!audio")

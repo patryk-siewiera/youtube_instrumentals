@@ -251,4 +251,4 @@ def get_info_current_item(data):
     return output_list
 
 
-print(get_info_all_list(sample_links.nested_link_sample_data12))
+# print(get_info_all_list(sample_links.nested_link_sample_data12))
