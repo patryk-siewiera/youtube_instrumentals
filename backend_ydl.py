@@ -57,12 +57,10 @@ ydl_opts_wav = {
 
 
 def ydl(gui_output):
-    #     number of all tracks from all artists,
-    #     for ex flume 2, skrillex 3 -> this will return 5 (int)
+    #    links are arranged in 3 groups (query, how_much, method)
     iterations = int(len(gui_output) / 3 - 1)
 
     # remove cache
-
     # unfinished downloads from past may cause errors,
     # it's safer to remove cache downloads - this remove possibility of continue downloads that was unfinished
 

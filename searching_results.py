@@ -13,7 +13,7 @@ ydl_opts = {
 }
 
 
-def get_info_all_list(video):
+def get_info_all_list(links_list):
     """
     input:
     [
@@ -31,53 +31,52 @@ def get_info_all_list(video):
 
     progress_count = 0
     progress_bar_steps = 0
-    for _ in range(len(video)):
-        for __ in range(len(video[_])):
+    for _ in range(len(links_list)):
+        for __ in range(len(links_list[_])):
             progress_bar_steps = progress_bar_steps + 1
-
     layout = [[sg.ProgressBar(progress_bar_steps, orientation='h', size=(70, 20), key='progbar')]]
-
     # create the Window
     window = sg.Window('Searching for more details...', layout)
 
     YoutubeDL(ydl_opts).cache.remove()
 
-    output = []
-
-    for i in range(len(video)):
+    output_info = []
+    for i in range(len(links_list)):
         event, values = window.read(timeout=0)
-        title_ = video[i][0]
-        print("\nquery name: ", title_)
-        output.insert(i, [title_])
-        output[i][0] = title_
+        tab_title = links_list[i][0]
+        print("\n\ttab title: ", tab_title)
+        output_info.insert(i, [tab_title])
+        output_info[i][0] = tab_title
 
-        for j in range(len(video[i])):
+        for j in range(len(links_list[i])):
             if event == 'Cancel' or event == sg.WIN_CLOSED:
                 break
             if j > 0:
-                link_current_iteration = video[i][j]
-                ydl_info_current = ydl_info_one_link(link_current_iteration)
-                output[i].insert(j, ydl_info_current)
+                link_current_iteration = links_list[i][j]
+                ydl_info_current = ydl_extract_info(link_current_iteration)
+                output_info[i].insert(j, ydl_info_current)
             window['progbar'].update_bar(progress_count)
             progress_count = progress_count + 1
-    save_to_file(output)
+
+    save_to_file(output_info)
 
     window.close()
 
-    output = create_window(output)
+    output_info = create_window(output_info)
 
-    return output
+    return output_info
 
 
-def ydl_info_one_link(video):
+def ydl_extract_info(video):
     """
-    take URL (str), and returns dict with information
-    :param video: str url
-    :return: dict
+    take URL (str),
+    and returns dict with information
+    ydl.extract_info
     """
-    i = 0
 
     # retry 10 times before
+    i = 0
+
     def inside(video, i):
         with YoutubeDL(ydl_opts) as ydl:
             try:
@@ -96,6 +95,51 @@ def ydl_info_one_link(video):
         pass
 
     return output
+
+
+def info_current_item(data):
+    '''
+    format data for easier reading
+    :param data: data parsed from get_info_all_list
+    :return:
+    '''
+    output = ""
+    output_list = []
+    max_length = 50  # cut longer strings than, to make window smaller
+    for i in range(len(data) - 1):
+        i = i + 1
+
+        # if len(data[i]) > 1:
+        # print('\t\tlen(data[i]):', len(data[i]['entries']))
+        try:
+            print(data[i]['entries'])
+        except:
+            pass
+
+        for j in range(len(data[i]['entries'])):
+            title = str(data[i]['entries'][j]['title'])[:max_length]
+            uploader = str(data[i]['entries'][j]['uploader'])[:max_length]
+
+            try:
+                # sometimes current_average == 0
+                current_average = str("{:.2f}").format(float(data[i]['entries'][j]["average_rating"]) / 5 * 100)[
+                                  :max_length]
+            except:
+                current_average = str('without any votes')
+
+            view_count = data[i]['entries'][j]['view_count']
+            view_count = f"{view_count:1,}"
+            view_count = view_count.replace(",", " ")
+            webpage_url_key = data[i]['entries'][j]['webpage_url']
+            output = str("title:\t\t" + title \
+                         + "\nuploader:\t\t" + uploader \
+                         + "\nlike / dislike ratio:\t" + current_average + " %" \
+                         + "\nview_count:\t" + view_count + "\n")
+
+            # modify this line to vertical
+            output_list = output_list + [checkbox_per_track(output, webpage_url_key)]
+        # output_list.append(create_layout(output, webpage_url_key))
+    return output_list
 
 
 def tab_group_generator(title, layout):
@@ -193,32 +237,16 @@ def save_to_file(input_data):
     return output
 
 
-def info_current_item(data):
-    '''
-    format data for easier reading
-    :param data: data parsed from get_info_all_list
-    :return:
-    '''
-    output = ""
-    output_list = []
-    max_length = 50  # cut longer strings than, to make window smaller
-    for i in range(len(data) - 1):
-        i = i + 1
-        title = str(data[i]['title'])[:max_length]
-        uploader = str(data[i]['uploader'])[:max_length]
-        current_average = str("{:.2f}").format(float(data[i]["average_rating"]) / 5 * 100)[:max_length]
-        view_count = data[i]['view_count']
-        view_count = f"{view_count:1,}"
-        view_count = view_count.replace(",", " ")
-        webpage_url_key = data[i]['webpage_url']
-        output = str("title:\t\t" + title \
-                     + "\nuploader:\t\t" + uploader \
-                     + "\nlike / dislike ratio:\t" + current_average + " %" \
-                     + "\nview_count:\t" + view_count + "\n")
-
-        # modify this line to vertical
-        output_list = output_list + [checkbox_per_track(output, webpage_url_key)]
-        # output_list.append(create_layout(output, webpage_url_key))
-    return output_list
-
 # print(get_info_all_list(sample_links.nested_link_sample_data12))
+
+mock_sample = [['q1', 'https://www.youtube.com/watch?v=WlosNFMCnE4'],
+               ['q2', 'ytsearch2:test']]
+
+mock_sample_only_search = [['q2', 'ytsearch10:search4words']]
+
+mock_sample2 = [['q1', 'https://www.youtube.com/watch?v=WlosNFMCnE4'],
+                ['q2', 'https://www.youtube.com/watch?v=yslkYSjAPh4'],
+                ['q3', 'QpyHrQYeoIE']]
+
+# get_info_all_list(mock_sample_only_search)
+# get_info_all_list(mock_sample2)
