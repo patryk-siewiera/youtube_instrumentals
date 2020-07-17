@@ -5,6 +5,8 @@ import validators
 from youtube_dl import YoutubeDL
 from data import sample_links
 
+# TODO: separate gui and logic?
+
 ydl_opts = {
     "ignoreerrors": True,
     'sleep_interval': 5,
@@ -126,9 +128,6 @@ def info_current_item(data):
             elif not nested:
                 query_search_or_link = data[i]
 
-            title = str(query_search_or_link['title'])[:max_length]
-            uploader = str(query_search_or_link['uploader'])[:max_length]
-
             try:
                 # sometimes current_average rating (like / dislike) == 0
                 current_average = str("{:.2f}").format(float(query_search_or_link["average_rating"]) / 5 * 100)[
@@ -136,20 +135,29 @@ def info_current_item(data):
             except:
                 current_average = str('without any votes')
 
-            # format view_count for ever 1000, example: 1,000,000,000
-            view_count = query_search_or_link['view_count']
-            view_count = f"{view_count:1,}"
-            view_count = view_count.replace(",", " ")
-            webpage_url_key = query_search_or_link['webpage_url']
+            try:
+                title = str(query_search_or_link['title'])[:max_length]
+                uploader = str(query_search_or_link['uploader'])[:max_length]
 
-            # format all parsed information to one string
-            output = str("title:\t\t" + title \
-                         + "\nuploader:\t\t" + uploader \
-                         + "\nlike / dislike ratio:\t" + current_average + " %" \
-                         + "\nview_count:\t" + view_count + "\n")
+                # format view_count for ever 1000, example: 1,000,000,000
+                view_count = query_search_or_link['view_count']
+                view_count = f"{view_count:1,}"
+                view_count = view_count.replace(",", " ")
+                webpage_url_key = query_search_or_link['webpage_url']
 
-            # TODO: modify this line to vertical
-            output_list = output_list + [checkbox_per_track(output, webpage_url_key)]
+                # format all parsed information to one string
+                output = str("title:\t\t" + title \
+                             + "\nuploader:\t\t" + uploader \
+                             + "\nlike / dislike ratio:\t" + current_average + " %" \
+                             + "\nview_count:\t" + view_count + "\n")
+
+                # TODO: modify this line to vertical
+                output_list = output_list + [checkbox_per_track(output, webpage_url_key)]
+
+            except:
+                # if there is premiere - you cannot download it
+                # will just skip it
+                pass
 
     return output_list
 
@@ -259,8 +267,10 @@ mock_sample_only_search = [['q2', 'ytsearch10:ariana grande']]
 mock_sample2 = [['q1', 'https://www.youtube.com/watch?v=WlosNFMCnE4', 'https://www.youtube.com/watch?v=q9fiSHCl5KQ'],
                 ['q2', 'https://www.youtube.com/watch?v=yslkYSjAPh4', 'https://www.youtube.com/watch?v=qu577tNp1hA'],
                 ['q3', 'QpyHrQYeoIE'],
-                ['q4', 'ytsearch10:ariana grande']]
+                ['q4', 'ytsearch10:ariana grande'],
+                ['q5', 'ytsearch6:flume']]
 
-# get_info_all_list(mock_sample_only_search)
-get_info_all_list(mock_sample2)
-# get_info_all_list(mock_sample2)
+mock_live_trans = [['flume', 'ytsearch3:flume']]
+
+print(get_info_all_list(mock_sample2))
+# print(get_info_all_list(mock_live_trans))
