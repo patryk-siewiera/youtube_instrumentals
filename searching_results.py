@@ -170,7 +170,8 @@ def layout_generator(data):
     tab_names = []
     unpack = []
     for tab_count in range(len(data)):
-        tab_names.append(data[tab_count][0])
+        # parse tab names, and cut more than 15 chars
+        tab_names.append(data[tab_count][0][:15])
 
     # TODO: here change to vertical output in frames
     for j in range(len(data)):
@@ -188,9 +189,11 @@ def layout_generator(data):
 
     inside_list = inside_layout(tab_names, unpack)
 
+    button_size = (32, 1)
     outside_layout = [
         [sg.TabGroup([inside_list])],
-        [sg.Button('Download selected')]]
+        [sg.Button('Download and create stems', key="download_and_create_stems", size=button_size),
+         sg.Button('Download only', key="download_only", size=button_size)]]
 
     # pprint.pprint(inside_list)
 
@@ -210,10 +213,12 @@ def create_window(data_input):
     layout = layout_generator(data_input)
     # activate frame here in layout =
     window = sg.Window('Download selected tracks', layout=layout,
-                       font=("Calibri ", 8))
+                       font=("Calibri ", 8), keep_on_top=True)
 
     # put output from window to variable, values
     event, values = window.read()
+
+    pressed_button = event
 
     # windows return what link to download, here take only with TRUE and returns it
     link_list = []
@@ -223,7 +228,7 @@ def create_window(data_input):
                 link_list.append(link)
 
     window.close()
-    return link_list
+    return link_list, pressed_button
 
 
 def put_content_into_frame(content, key):
@@ -267,10 +272,35 @@ mock_sample_only_search = [['q2', 'ytsearch10:ariana grande']]
 mock_sample2 = [['q1', 'https://www.youtube.com/watch?v=WlosNFMCnE4', 'https://www.youtube.com/watch?v=q9fiSHCl5KQ'],
                 ['q2', 'https://www.youtube.com/watch?v=yslkYSjAPh4', 'https://www.youtube.com/watch?v=qu577tNp1hA'],
                 ['q3', 'QpyHrQYeoIE'],
-                ['q4', 'ytsearch10:ariana grande'],
-                ['q5', 'ytsearch6:flume']]
+                ['arianna grande', 'ytsearch10:ariana grande'],
+                ['son lux', 'ytsearch12:son lux'],
+                ['flume eeeeeee', 'ytsearch6:flume']]
+
+tab_test = [['q3', 'QpyHrQYeoIE'],
+            ['long_tabtabtabtabtabname', 'QpyHrQYeoIE'],
+            ['long_tabtabtabtabtabname', 'QpyHrQYeoIE'],
+            ['long_tabtabtabtabtabname', 'QpyHrQYeoIE'],
+            ['long_tabtabtabtabtabname', 'QpyHrQYeoIE'],
+            ['long_tabtabtabtabtabname', 'QpyHrQYeoIE'],
+            ['long_tabtabtabtabtabname', 'QpyHrQYeoIE'],
+            ['long_tabtabtabtabtabname', 'QpyHrQYeoIE'],
+            ['long_tabtabtabtabtabname', 'QpyHrQYeoIE'],
+            ['long_tabtabtabtabtabname', 'QpyHrQYeoIE'],
+            ['long_tabtabtabtabtabname', 'QpyHrQYeoIE'],
+            ['long_tabtabtabtabtabname', 'QpyHrQYeoIE'],
+            ['long_tabtabtabtabtabname', 'QpyHrQYeoIE'],
+            ['long_tabtabtabtabtabname', 'QpyHrQYeoIE'],
+            ['long_tabtabtabtabtabname', 'QpyHrQYeoIE'],
+            ['long_tabtabtabtabtabname', 'QpyHrQYeoIE'],
+            ['long_tabtabtabtabtabname', 'QpyHrQYeoIE'],
+            ['long_tabtabtabtabtabname', 'QpyHrQYeoIE'],
+            ['long_tabtabtabtabtabname', 'QpyHrQYeoIE'],
+            ['long_tabtabtabtabtabname', 'QpyHrQYeoIE'],
+            ['long_tabtabtabtabtabname', 'QpyHrQYeoIE'],
+            ['q3', 'QpyHrQYeoIE']]
 
 mock_live_trans = [['flume', 'ytsearch3:flume']]
 
-print(get_info_all_list(mock_sample2))
+# print(get_info_all_list(tab_test))
 # print(get_info_all_list(mock_live_trans))
+print(get_info_all_list(mock_sample2))
