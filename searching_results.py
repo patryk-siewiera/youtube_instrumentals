@@ -9,7 +9,9 @@ ydl_opts = {
     "ignoreerrors": True,
     'sleep_interval': 5,
     'geo-bypass': False,
-    'quiet': False
+    'quiet': False,
+    'forcetitle': True,
+    'forceurl': True,
 }
 
 
@@ -103,42 +105,52 @@ def info_current_item(data):
     :param data: data parsed from get_info_all_list
     :return:
     '''
-    output = ""
     output_list = []
     max_length = 50  # cut longer strings than, to make window smaller
+
     for i in range(len(data) - 1):
         i = i + 1
 
-        # if len(data[i]) > 1:
-        # print('\t\tlen(data[i]):', len(data[i]['entries']))
+        # ytsearchX: is nested list so need to be iterated, single links don't
         try:
-            print(data[i]['entries'])
+            range_of_list = len(data[i]['entries'])
+            nested = True
         except:
-            pass
+            range_of_list = 1
+            nested = False
 
-        for j in range(len(data[i]['entries'])):
-            title = str(data[i]['entries'][j]['title'])[:max_length]
-            uploader = str(data[i]['entries'][j]['uploader'])[:max_length]
+        for j in range(range_of_list):
+            # nested / not nested (signle links) need different queries
+            if nested:
+                query_search_or_link = data[i]['entries'][j]
+            elif not nested:
+                query_search_or_link = data[i]
+
+            title = str(query_search_or_link['title'])[:max_length]
+            uploader = str(query_search_or_link['uploader'])[:max_length]
 
             try:
-                # sometimes current_average == 0
-                current_average = str("{:.2f}").format(float(data[i]['entries'][j]["average_rating"]) / 5 * 100)[
+                # sometimes current_average rating (like / dislike) == 0
+                current_average = str("{:.2f}").format(float(query_search_or_link["average_rating"]) / 5 * 100)[
                                   :max_length]
             except:
                 current_average = str('without any votes')
 
-            view_count = data[i]['entries'][j]['view_count']
+            # format view_count for ever 1000, example: 1,000,000,000
+            view_count = query_search_or_link['view_count']
             view_count = f"{view_count:1,}"
             view_count = view_count.replace(",", " ")
-            webpage_url_key = data[i]['entries'][j]['webpage_url']
+            webpage_url_key = query_search_or_link['webpage_url']
+
+            # format all parsed information to one string
             output = str("title:\t\t" + title \
                          + "\nuploader:\t\t" + uploader \
                          + "\nlike / dislike ratio:\t" + current_average + " %" \
                          + "\nview_count:\t" + view_count + "\n")
 
-            # modify this line to vertical
+            # TODO: modify this line to vertical
             output_list = output_list + [checkbox_per_track(output, webpage_url_key)]
-        # output_list.append(create_layout(output, webpage_url_key))
+
     return output_list
 
 
@@ -242,11 +254,13 @@ def save_to_file(input_data):
 mock_sample = [['q1', 'https://www.youtube.com/watch?v=WlosNFMCnE4'],
                ['q2', 'ytsearch2:test']]
 
-mock_sample_only_search = [['q2', 'ytsearch10:search4words']]
+mock_sample_only_search = [['q2', 'ytsearch10:ariana grande']]
 
-mock_sample2 = [['q1', 'https://www.youtube.com/watch?v=WlosNFMCnE4'],
-                ['q2', 'https://www.youtube.com/watch?v=yslkYSjAPh4'],
-                ['q3', 'QpyHrQYeoIE']]
+mock_sample2 = [['q1', 'https://www.youtube.com/watch?v=WlosNFMCnE4', 'https://www.youtube.com/watch?v=q9fiSHCl5KQ'],
+                ['q2', 'https://www.youtube.com/watch?v=yslkYSjAPh4', 'https://www.youtube.com/watch?v=qu577tNp1hA'],
+                ['q3', 'QpyHrQYeoIE'],
+                ['q4', 'ytsearch10:ariana grande']]
 
 # get_info_all_list(mock_sample_only_search)
+get_info_all_list(mock_sample2)
 # get_info_all_list(mock_sample2)

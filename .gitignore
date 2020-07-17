@@ -129,3 +129,6 @@ dmypy.json
 .pyre/
 /!download/
 /!delete/
+
+# output files
+/data/!output__searching_results_PY.txt
