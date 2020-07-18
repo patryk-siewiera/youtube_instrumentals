@@ -153,4 +153,4 @@ def ydl(gui_output):
 
 global_artists_name = []
 
-print("\n\t\tOUTPUT:\t", parse(mock_gui_output_flume_skrillex_tameimpala_10))
+# print("\n\t\tOUTPUT:\t", parse(mock_gui_output_flume_skrillex_tameimpala_10))

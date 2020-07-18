@@ -1,5 +1,5 @@
 import pprint
-
+import random
 import PySimpleGUI as sg
 import validators
 from youtube_dl import YoutubeDL
@@ -112,7 +112,11 @@ def get_info_all_list(links_list):
                 output_info[i].insert(j, ydl_info_current)
                 if name_for_tab == True:
                     print("\n\n TRUE")
-                    uploader = ydl_info_current['uploader']
+                    try:
+                        uploader = ydl_info_current['uploader']
+                    except:
+                        uploader = "??"
+                    print(ydl_info_current)
                     output_info[i][0] = uploader
                     print(uploader)
             window['progbar'].update_bar(progress_count)
@@ -220,12 +224,12 @@ def info_current_item(data):
 
 def tab_group_generator(title, layout):
     multiple = []
-    horizontal_elements_size = 5
+    horizontal_elements_size = 10
     print("len layout", len(layout))
     for i in range((len(layout) // horizontal_elements_size) + 1):
         print("inside")
-        start_list = i * 5
-        end_list = (i + 1) * 5
+        start_list = i * horizontal_elements_size
+        end_list = (i + 1) * horizontal_elements_size
         print('range', start_list, end_list)
         multiple = multiple + [sg.Frame("inside tabs frame", layout[start_list:end_list])]
 
@@ -376,6 +380,6 @@ mock_live_trans = [['flume', 'ytsearch3:flume']]
 # print(get_info_all_list(mock_live_trans))
 # print(get_info_all_list(mock_sample2))
 # get_info_all_list(sample_links.nested_link_sample_data14_23_24_skrillex_tameimpala_hole)
-# print(get_info_all_list(parse(sample_gui.mock_gui_livestream_link_too_big)))
+# print(get_info_all_list(parse(sample_gui.mock_gui_livestream_link_huge)))
 # var = output__searching_results_PY
-create_window(output__searching_results_PY.output)
+# create_window(output__searching_results_PY.output)
