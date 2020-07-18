@@ -3,11 +3,11 @@ from datetime import datetime
 import PySimpleGUI as sg
 import pathlib
 
-input_links = ['https://www.youtube.com/watch?v=mu32phZdlZo', 'https://www.youtube.com/watch?v=VofkCG33xFs']
+input_links = (['https://www.youtube.com/watch?v=mu32phZdlZo', 'https://www.youtube.com/watch?v=VofkCG33xFs'], "method")
 
 
 def download(input_links):
-    progress_bar_steps = len(input_links)
+    progress_bar_steps = len(input_links[0])
 
     # datetime object containing current date and time, to folder naming
     now = datetime.now()
@@ -35,8 +35,8 @@ def download(input_links):
     }
 
     for i in range(progress_bar_steps):
-        print(str(input_links[i]))
-        youtube_dl.YoutubeDL(ydl_opts_wav).download([str(input_links[i])])
+        print(str(input_links[0][i]))
+        youtube_dl.YoutubeDL(ydl_opts_wav).download([str(input_links[0][i])])
         progress_bar.UpdateBar(i + 1)
 
     window.close()

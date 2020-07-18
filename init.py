@@ -8,7 +8,7 @@ import download_list_link
 
 gui_output = gui.main()
 
-link_list = backend_ydl.ydl(gui_output)
+link_list = backend_ydl.parse(gui_output)
 
 searching_output = searching_results.get_info_all_list(link_list)
 

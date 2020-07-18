@@ -131,4 +131,4 @@ dmypy.json
 /!delete/
 
 # output files
-/data/!output__searching_results_PY.txt
+/data/output__searching_results_PY.py

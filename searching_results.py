@@ -4,17 +4,62 @@ import PySimpleGUI as sg
 import validators
 from youtube_dl import YoutubeDL
 from data import sample_links
+from data import sample_gui
+from data import output__searching_results_PY
 
 # TODO: separate gui and logic?
 
 ydl_opts = {
-    "ignoreerrors": True,
-    'sleep_interval': 5,
-    'geo-bypass': False,
-    'quiet': False,
-    'forcetitle': True,
-    'forceurl': True,
+    # options for youtube_dl
+    # simulate: true -> this will only gather information
+    'format': 'bestaudio/best',
+    'outtmpl': '!download/%(uploader)s/%(title)s.%(ext)s',
+    'min_views': 10000,
+    'max_views': 10000000000000,
+    'max_length': 1000,
+    'ignoreerrors': True,
+    'simulate': True,
+    'postprocessors': [{
+        'key': 'FFmpegExtractAudio',
+        'preferredcodec': 'wav',
+        'preferredquality': '320',
+    }],
 }
+
+
+def parse(gui_output):
+    parsed_list = []
+    iterations = int(len(gui_output) / 3 - 1)
+    for k in range(iterations):
+        k = k + 1
+        id_name = k * 10 + 0
+        id_how_much = k * 10 + 1
+        id_method = k * 10 + 2
+
+        # parse for every iteration (line), corresponding value
+        name = gui_output[id_name]
+        how_much = gui_output[id_how_much]
+        method = gui_output[id_method]
+
+        # print(name)
+
+        if validators.url(name):
+            parsed_list.append(["SEARCH_FOR_TAB_NAME", name])
+
+        # skip empty queries
+        elif name == "" or name is None or how_much == 0:
+            continue
+
+        elif not validators.url(name):
+            # remove chars that aren't letters or numbers
+            alphanumeric = [character for character in name if (character.isalnum() or character.isspace())]
+            name = "".join(alphanumeric)
+            # query generator
+            query = "ytsearch" + str(how_much) + ":" + str(name)
+            output = [name, query]
+            parsed_list.append(output)
+
+    return parsed_list
 
 
 def get_info_all_list(links_list):
@@ -46,8 +91,14 @@ def get_info_all_list(links_list):
 
     output_info = []
     for i in range(len(links_list)):
+        name_for_tab = False
         event, values = window.read(timeout=0)
         tab_title = links_list[i][0]
+
+        if tab_title == "SEARCH_FOR_TAB_NAME":
+            name_for_tab = True
+            print("\n\n\nHERE FIND TAB NAME ")
+
         print("\n\ttab title: ", tab_title)
         output_info.insert(i, [tab_title])
         output_info[i][0] = tab_title
@@ -59,6 +110,11 @@ def get_info_all_list(links_list):
                 link_current_iteration = links_list[i][j]
                 ydl_info_current = ydl_extract_info(link_current_iteration)
                 output_info[i].insert(j, ydl_info_current)
+                if name_for_tab == True:
+                    print("\n\n TRUE")
+                    uploader = ydl_info_current['uploader']
+                    output_info[i][0] = uploader
+                    print(uploader)
             window['progbar'].update_bar(progress_count)
             progress_count = progress_count + 1
 
@@ -163,7 +219,18 @@ def info_current_item(data):
 
 
 def tab_group_generator(title, layout):
-    return sg.Tab(title=title, layout=[[sg.Frame("inside tabs frame", layout)]])
+    multiple = []
+    horizontal_elements_size = 5
+    print("len layout", len(layout))
+    for i in range((len(layout) // horizontal_elements_size) + 1):
+        print("inside")
+        start_list = i * 5
+        end_list = (i + 1) * 5
+        print('range', start_list, end_list)
+        multiple = multiple + [sg.Frame("inside tabs frame", layout[start_list:end_list])]
+
+    return sg.Tab(title=title,
+                  layout=[multiple])
 
 
 def layout_generator(data):
@@ -185,10 +252,14 @@ def layout_generator(data):
         """
         for i in range(len(tab_names)):
             inside_list.append(tab_group_generator(tab_names[i], unpack[i]))
+            # every tab have objects - tracks - to calculate per tab - unpack[i]
+            # print(unpack[i])
+
         return inside_list
 
     inside_list = inside_layout(tab_names, unpack)
 
+    print(inside_list)
     button_size = (32, 1)
     outside_layout = [
         [sg.TabGroup([inside_list])],
@@ -213,7 +284,7 @@ def create_window(data_input):
     layout = layout_generator(data_input)
     # activate frame here in layout =
     window = sg.Window('Download selected tracks', layout=layout,
-                       font=("Calibri ", 8), keep_on_top=True)
+                       font=("Calibri ", 8), keep_on_top=True, resizable=True)
 
     # put output from window to variable, values
     event, values = window.read()
@@ -251,13 +322,13 @@ def checkbox_per_track(data, key):
 
 def save_to_file(input_data):
     """
-    save input_data, in !output__searching_results_PY.txt file with pprint formatting
+    save input_data, in output__searching_results_PY.py file with pprint formatting
     """
     # if depth to small, returns (...) and cut important data
     pp = pprint.PrettyPrinter(depth=10)
     output = pp.pformat(input_data)
-    filename = "data/!output__searching_results_PY.txt"
-    open(filename, "w", encoding="utf-8").write(output)
+    filename = "data/output__searching_results_PY.py"
+    open(filename, "w", encoding="utf-8").write("output=" + output)
     print("\nRaw youtube data in file (PPrint):\n", filename, "\n")
     return output
 
@@ -303,4 +374,8 @@ mock_live_trans = [['flume', 'ytsearch3:flume']]
 
 # print(get_info_all_list(tab_test))
 # print(get_info_all_list(mock_live_trans))
-print(get_info_all_list(mock_sample2))
+# print(get_info_all_list(mock_sample2))
+# get_info_all_list(sample_links.nested_link_sample_data14_23_24_skrillex_tameimpala_hole)
+# print(get_info_all_list(parse(sample_gui.mock_gui_livestream_link_too_big)))
+# var = output__searching_results_PY
+create_window(output__searching_results_PY.output)
