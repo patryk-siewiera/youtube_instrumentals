@@ -1,7 +1,7 @@
 # youtube_instrumentals
 Download multiple tracks from youtube by single query. <br/> <br/>
 (in future also and create instrumentals / stems automatically) <br/>
-(_when i learn how to combine pip, conda and docker_)
+(_when i learn how to combine **pip** and **conda** together_)
 
 # Start:
 

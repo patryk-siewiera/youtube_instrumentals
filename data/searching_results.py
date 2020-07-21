@@ -3,6 +3,7 @@ import pprint
 import PySimpleGUI as sg
 import validators
 from youtube_dl import YoutubeDL
+from data.output import output__searching_results_PY
 
 # TODO: separate gui and logic?
 
@@ -38,7 +39,6 @@ def parse(gui_output):
         how_much = gui_output[id_how_much]
         method = gui_output[id_method]
 
-        # print(name)
 
         if validators.url(name):
             parsed_list.append(["SEARCH_FOR_TAB_NAME", name])
@@ -108,14 +108,11 @@ def get_info_all_list(links_list):
                 ydl_info_current = ydl_extract_info(link_current_iteration)
                 output_info[i].insert(j, ydl_info_current)
                 if name_for_tab == True:
-                    print("\n\n TRUE")
                     try:
                         uploader = ydl_info_current['uploader']
                     except:
                         uploader = "??"
-                    print(ydl_info_current)
                     output_info[i][0] = uploader
-                    print(uploader)
             window['progbar'].update_bar(progress_count)
             progress_count = progress_count + 1
 
@@ -212,8 +209,7 @@ def info_current_item(data):
                 output_list = output_list + [checkbox_per_track(output, webpage_url_key)]
 
             except:
-                # if there is premiere - you cannot download it
-                # will just skip it
+                print("\t\t\n you cannot download tracks from radio / live stream... :( \n\n")
                 pass
 
     return output_list
@@ -222,12 +218,9 @@ def info_current_item(data):
 def tab_group_generator(title, layout):
     multiple = []
     horizontal_elements_size = 10
-    print("len layout", len(layout))
     for i in range((len(layout) // horizontal_elements_size) + 1):
-        print("inside")
         start_list = i * horizontal_elements_size
         end_list = (i + 1) * horizontal_elements_size
-        print('range', start_list, end_list)
         multiple = multiple + [sg.Frame("inside tabs frame", layout[start_list:end_list])]
 
     return sg.Tab(title=title,
@@ -264,8 +257,8 @@ def layout_generator(data):
     button_size = (32, 1)
     outside_layout = [
         [sg.TabGroup([inside_list])],
-        [sg.Button('Download and create stems', key="download_and_create_stems", size=button_size),
-         sg.Button('Download only', key="download_only", size=button_size)]]
+        [sg.Button('Download WAV (best quality)', key="download_wav", size=button_size),
+         sg.Button('Download MP3 (smallest size)', key="download_mp3", size=button_size)]]
 
     # pprint.pprint(inside_list)
 
@@ -278,6 +271,10 @@ def create_window(data_input):
     :param data_input:
     :return: selected links
     """
+
+    if data_input == []:
+        print("\n\t Your didn't write any queries / how_much == 0")
+        exit()
 
     sg.theme('dark')
 
@@ -300,6 +297,9 @@ def create_window(data_input):
                 link_list.append(link)
 
     window.close()
+    if link_list == []:
+        print("\n\tExit, you didn't select any tracks...")
+        exit()
     return link_list, pressed_button
 
 
@@ -330,7 +330,6 @@ def save_to_file(input_data):
     output = pp.pformat(input_data)
     filename = "data/output/output__searching_results_PY.py"
     open(filename, "w", encoding="utf-8").write("output=" + output)
-    print("\nRaw youtube data in file (PPrint):\n", filename, "\n")
     return output
 
 
@@ -371,12 +370,4 @@ tab_test = [['q3', 'QpyHrQYeoIE'],
             ['long_tabtabtabtabtabname', 'QpyHrQYeoIE'],
             ['q3', 'QpyHrQYeoIE']]
 
-mock_live_trans = [['flume', 'ytsearch3:flume']]
-
-# print(get_info_all_list(tab_test))
-# print(get_info_all_list(mock_live_trans))
-# print(get_info_all_list(mock_sample2))
-# get_info_all_list(sample_links.nested_link_sample_data14_23_24_skrillex_tameimpala_hole)
-# print(get_info_all_list(parse(sample_gui.mock_gui_livestream_link_huge)))
-# var = output__searching_results_PY
 # create_window(output__searching_results_PY.output)

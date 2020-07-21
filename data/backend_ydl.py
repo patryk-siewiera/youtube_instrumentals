@@ -62,7 +62,7 @@ ydl_opts_wav = {
 
 def parse(gui_output):
     parsed_list = []
-    iterations = int(len(gui_output) / 3 - 1)
+    iterations = int(len(gui_output) / 3)
     for k in range(iterations):
         k = k + 1
         id_name = k * 10 + 0
@@ -96,60 +96,6 @@ def parse(gui_output):
             parsed_list.append(output)
 
     return parsed_list
-
-
-def ydl(gui_output):
-    #    links are arranged in 3 groups (query, how_much, method)
-    iterations = int(len(gui_output) / 3 - 1)
-
-    # remove cache
-    # unfinished downloads from past may cause errors,
-    # it's safer to remove cache downloads - this remove possibility of continue downloads that was unfinished
-
-    youtube_dl.YoutubeDL(ydl_opts_wav).cache.remove()
-
-    for k in range(iterations):
-        # get id for every line of gui
-        index_nr = k
-        k = k + 1
-        id_name = k * 10 + 0
-        id_how_much = k * 10 + 1
-        id_method = k * 10 + 2
-
-        # parse for every iteration (line), corresponding value
-        name = gui_output[id_name]
-        how_much = gui_output[id_how_much]
-        method = gui_output[id_method]
-
-        # ignore lines when there isn't any input (from gui10 line window)
-        if name == "":
-            break
-
-        print("name", name, "how_much", how_much, "method", method)
-
-        query = "ytsearch" + str(how_much) + ":" + name
-
-        one_artist_link_list = []
-        one_artist_link_list.append(name),
-        global_artists_name.append(one_artist_link_list)
-
-        print(query)
-        # for p in range(how_much):
-        #     links = youtube_dl_info_parser['entries'][p]['id']
-        #     one_artist_link_list[index_nr].append(links)
-        try:
-            youtube_dl_info_parser = youtube_dl.YoutubeDL(ydl_opts_wav).extract_info(query)
-            number_links = len(youtube_dl_info_parser['entries'])
-            print("\n\n\n", number_links)
-            for m in range(number_links):
-                global_artists_name[index_nr].append(youtube_dl_info_parser['entries'][m]['id'])
-            # links = youtube_dl_info_parser['entries'][0]['id']
-            # print("this is links: ", links)
-        except:
-            print('************** EXCEPT: youtube-dl unsupported keyword')
-
-    return global_artists_name
-
 
 global_artists_name = []
 

@@ -24,7 +24,7 @@ stems_methods = ['1: Without Separation : Whole track',
                  '4: Stems: Vocals / Drums / Bass / Other separation',
                  '5: Stems: Vocals / Drums / Bass / Piano / Other separation']
 
-menu_layout = [["Help", ['Help', 'GitHub Page', 'About']]]
+menu_layout = [["Help", ['GitHub Page', 'About']]]
 bpm_combo = [40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160, 170, 180, 190, 200, 210, 220, 230, 240, 250,
              260, 270, 280, 290, 300, 310]
 
@@ -84,17 +84,15 @@ def gui_about(event_list):
     """open popup: about information and libraries"""
     sg.popup("""
 
-
-PLEASE USE THIS ONLY WITH NOT COPYRIGHTED MATERIAL 
-ONLY EDUCATIONAL USE
+PLEASE USE THIS ONLY WITH NOT  COPYRIGHTED 
+MATERIAL ONLY EDUCATIONAL USE
 
 Used Python Packages:
 - PySimpleGui
 - YouTubeDL
 - Spleeter (Deezer)
 
-
-""", title="about", keep_on_top=True)
+""", title="About", keep_on_top=True)
     return event_list[:-1]
 
 
@@ -114,8 +112,7 @@ def gui_menu():
 
 def gui_info_row():
     """add information about every row """
-    return [[sg.Text('Keywords, Link or Local File Url', size=(44, 1), key="11"), sg.Text('How much', size=(10, 1)),
-             sg.Text('Method 1/2/4/5')]]
+    return [[sg.Text('Keywords, Link or Playlist YouTube', size=(44, 1), key="11"), sg.Text('How much', size=(10, 1))]]
 
 
 def gui_output_folder():
@@ -124,6 +121,11 @@ def gui_output_folder():
             [sg.Text('Output folder'), sg.InputText(default_text=cwd, size=output_row, key='-DEFAULT_FOLDER-'),
              sg.FolderBrowse()],
             [sg.Text('')]]
+
+
+def gui_empty_lines():
+    """ add 2 empty lines to gui"""
+    return [[sg.Text('')]]
 
 
 def gui_oneline():
@@ -283,19 +285,21 @@ def gui_1line(value, settings, event_list):
     sg.theme(settings['theme'])
     gui_input_row_1 = [[sg.InputText(str(value[10]), size=row1, key=10),
                         sg.Combo(how_much_combo,
-                                 default_value=value[11], size=row2, key=11),
-                        sg.Combo(stems_methods, size=row3, default_value=value[12], key=12)]]
+                                 default_value=1, size=row2, key=11),
+                        sg.Combo(stems_methods, size=row3, default_value=value[12], key=12, visible=False)]]
 
     # initialize specific part
     window1 = sg.Window(title=program_title,
-                        layout=(gui_menu() + gui_info_row() + gui_input_row_1 + gui_output_folder() + gui_add10()
-                                + gui_download_exit()),
+                        layout=(
+                                gui_menu() + gui_info_row() + gui_input_row_1 + gui_empty_lines() + gui_add10() +
+                                gui_download_exit()),
                         keep_on_top=settings['keep_on_top_setting'],
                         icon=icon_path)
 
     event, value = window1.read()
     window1.close()
     event_list.append(event)
+
     value = validation(value)
 
     return value, settings, event_list
@@ -306,48 +310,48 @@ def gui_10line(value, settings, event_list):
     gui_input_row_10 = [[sg.InputText(str(value[10]), size=row1, key=10),
                          sg.Combo(how_much_combo,
                                   size=row2, key=11, default_value=value[11]),
-                         sg.Combo(stems_methods, size=row3, key=12, default_value=value[12])],
+                         sg.Combo(stems_methods, size=row3, key=12, default_value=value[12], visible=False)],
                         [sg.InputText(size=row1, key=20),
                          sg.Combo(how_much_combo,
                                   default_value=how_much_combo[0], size=row2, key=21),
-                         sg.Combo(stems_methods, size=row3, default_value=stems_methods[0], key=22)],
+                         sg.Combo(stems_methods, size=row3, default_value=stems_methods[0], key=22, visible=False)],
                         [sg.InputText(size=row1, key=30),
                          sg.Combo(how_much_combo,
                                   default_value=how_much_combo[0], size=row2, key=31),
-                         sg.Combo(stems_methods, size=row3, default_value=stems_methods[0], key=32)],
+                         sg.Combo(stems_methods, size=row3, default_value=stems_methods[0], key=32, visible=False)],
                         [sg.InputText(size=row1, key=40),
                          sg.Combo(how_much_combo,
                                   default_value=how_much_combo[0], size=row2, key=41),
-                         sg.Combo(stems_methods, size=row3, default_value=stems_methods[0], key=42)],
+                         sg.Combo(stems_methods, size=row3, default_value=stems_methods[0], key=42, visible=False)],
                         [sg.InputText(size=row1, key=50),
                          sg.Combo(how_much_combo,
                                   default_value=how_much_combo[0], size=row2, key=51),
-                         sg.Combo(stems_methods, size=row3, default_value=stems_methods[0], key=52)],
+                         sg.Combo(stems_methods, size=row3, default_value=stems_methods[0], key=52, visible=False)],
                         [sg.InputText(size=row1, key=60),
                          sg.Combo(how_much_combo,
                                   default_value=how_much_combo[0], size=row2, key=61),
-                         sg.Combo(stems_methods, size=row3, default_value=stems_methods[0], key=62)],
+                         sg.Combo(stems_methods, size=row3, default_value=stems_methods[0], key=62, visible=False)],
                         [sg.InputText(size=row1, key=70),
                          sg.Combo(how_much_combo,
                                   default_value=how_much_combo[0], size=row2, key=71),
-                         sg.Combo(stems_methods, size=row3, default_value=stems_methods[0], key=72)],
+                         sg.Combo(stems_methods, size=row3, default_value=stems_methods[0], key=72, visible=False)],
                         [sg.InputText(size=row1, key=80),
                          sg.Combo(how_much_combo,
                                   default_value=how_much_combo[0], size=row2, key=81),
-                         sg.Combo(stems_methods, size=row3, default_value=stems_methods[0], key=82)],
+                         sg.Combo(stems_methods, size=row3, default_value=stems_methods[0], key=82, visible=False)],
                         [sg.InputText(size=row1, key=90),
                          sg.Combo(how_much_combo,
                                   default_value=how_much_combo[0], size=row2, key=91),
-                         sg.Combo(stems_methods, size=row3, default_value=stems_methods[0], key=92)],
+                         sg.Combo(stems_methods, size=row3, default_value=stems_methods[0], key=92, visible=False)],
                         [sg.InputText(size=row1, key=100),
                          sg.Combo(how_much_combo,
                                   default_value=how_much_combo[0], size=row2, key=101),
-                         sg.Combo(stems_methods, size=row3, default_value=stems_methods[0], key=102)]]
+                         sg.Combo(stems_methods, size=row3, default_value=stems_methods[0], key=102, visible=False)]]
 
     window10 = sg.Window(title=program_title,
                          layout=(
-                                 gui_menu() + gui_info_row() + gui_input_row_10 + gui_output_folder() +
-                                 gui_oneline() + gui_download_exit()),
+                                 gui_menu() + gui_info_row() + gui_input_row_10 + gui_empty_lines() + gui_oneline() +
+                                 gui_download_exit()),
                          keep_on_top=settings['keep_on_top_setting'],
                          icon=icon_path)
 
@@ -388,5 +392,4 @@ def main():
             exit()
 
         if event[-1] == "Download":
-            print(">>> gui, return here <<<")
             return value

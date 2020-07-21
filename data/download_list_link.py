@@ -24,12 +24,12 @@ def download(input_links):
     event, values = window.read(timeout=10)
 
     current_path = pathlib.Path().absolute()
-    path_one_level_up = pathlib.Path(current_path).parents[0]
+    # path_one_level_up = pathlib.Path(current_path).parents[0]
 
     # ###### Downloader
     ydl_opts_wav = {
         'format': 'bestaudio/best',
-        'outtmpl': str(path_one_level_up) + "/!audio/" + dt_string + '/%(uploader)s/%(title)s.%(ext)s',
+        'outtmpl': str(current_path) + "/!audio/" + dt_string + '/%(title)s.%(ext)s',
         'max_length': 1000,
         'ignoreerrors': True,
         'postprocessors': [{
@@ -40,7 +40,6 @@ def download(input_links):
     }
 
     for i in range(progress_bar_steps):
-        print(str(input_links[0][i]))
         youtube_dl.YoutubeDL(ydl_opts_wav).download([str(input_links[0][i])])
         progress_bar.UpdateBar(i + 1)
 
@@ -50,7 +49,3 @@ def download(input_links):
              str(current_path) + "\ \n\ !audio \ " + dt_string + "\ \n\n\nProgram will exit end in 20s...",
              auto_close=True,
              auto_close_duration=20)
-
-# download(input_links)
-# current_path = pathlib.Path().absolute()
-# print(str(pathlib.Path(current_path).parents[0]))
