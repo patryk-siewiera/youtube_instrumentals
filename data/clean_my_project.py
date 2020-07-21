@@ -37,6 +37,9 @@ def remove_delete_download(folder):
 
 
 def main():
+    """
+    removes all downloaded files
+    """
     move_files('.part', create_folder('!delete'))
     move_files('.ytdl', create_folder('!delete'))
     move_files('.wav', create_folder('!delete'))

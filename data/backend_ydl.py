@@ -1,47 +1,6 @@
 import youtube_dl
 import validators
 
-# TODO rename file to: search_links.py
-
-# mock input data -> don't need to run gui to check
-mock_gui_output_1 = {0: None, 10: 'skrillex', 11: 2, 12: '1: Without Separation : Whole track',
-                     '-DEFAULT_FOLDER-': 'C:\\!\\git\\youtube_instrumentals\\!download', 'Browse': ''}
-
-# TODO: default how_much == 1, just skip if query is empty
-mock_gui_output_flume_skrillex_tameimpala_10 = {0: None, 10: 'flume', 11: 2, 12: '1: Without Separation : Whole track',
-                                                20: 'skril!!lex', 21: '3',
-                                                22: '1: Without Separation : Whole track', 30: 'tame impala ', 31: '4',
-                                                32: '1: Without Separation : Whole track',
-                                                40: 'https://www.youtube.com/watch?v=tsK0EG1vpSw', 41: 0,
-                                                42: '1: Without Separation : Whole track',
-                                                50: 'C:/Users/workp/Downloads/guitest/guitest.py', 51: 0,
-                                                52: '1: Without Separation : Whole track', 60: 'The Dø', 61: 2,
-                                                62: '1: Without Separation : Whole track', 70: '', 71: 0,
-                                                72: '1: Without Separation : Whole track',
-                                                80: '', 81: 0, 82: '1: Without Separation : Whole track', 90: '', 91: 0,
-                                                92: '1: Without Separation : Whole track', 100: '', 101: 0,
-                                                102: '1: Without Separation : Whole track',
-                                                '-DEFAULT_FOLDER-': 'C:\\!\\git\\youtube_instrumentals\\!download',
-                                                'Browse': ''}
-
-mock_gui_output_banks_audioslave_sonlux_jamesblake = {0: None, 10: 'banks', 11: 10,
-                                                      12: '1: Without Separation : Whole track',
-                                                      20: 'audioslave', 21: '3',
-                                                      22: '1: Without Separation : Whole track', 30: 'son lux', 31: '4',
-                                                      32: '1: Without Separation : Whole track', 40: 'james blake',
-                                                      41: 5,
-                                                      42: '1: Without Separation : Whole track',
-                                                      50: '', 51: 0, 52: '1: Without Separation : Whole track', 60: '',
-                                                      61: 0,
-                                                      62: '1: Without Separation : Whole track', 70: '', 71: 0,
-                                                      72: '1: Without Separation : Whole track',
-                                                      80: '', 81: 0, 82: '1: Without Separation : Whole track', 90: '',
-                                                      91: 0,
-                                                      92: '1: Without Separation : Whole track', 100: '', 101: 0,
-                                                      102: '1: Without Separation : Whole track',
-                                                      '-DEFAULT_FOLDER-': 'C:\\!\\git\\youtube_instrumentals\\!download',
-                                                      'Browse': ''}
-
 ydl_opts_wav = {
     # options for youtube_dl
     # simulate: true -> this will only gather information
@@ -96,7 +55,3 @@ def parse(gui_output):
             parsed_list.append(output)
 
     return parsed_list
-
-global_artists_name = []
-
-# print("\n\t\tOUTPUT:\t", parse(mock_gui_output_flume_skrillex_tameimpala_10))

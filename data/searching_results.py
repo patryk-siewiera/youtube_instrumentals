@@ -7,7 +7,12 @@ from data.output import output__searching_results_PY
 
 # TODO: separate gui and logic?
 
-ydl_opts = {
+# PySimpleGui don't allow for scrollable windows - this is max count of elements per tab
+HORIZONTAL_ELEMENTS_SIZE = 10
+VERTICAL_ELEMENTS_SIZE = 4
+HORIZONTAL_VERTICAL_ELEMENTS_LIMIT = HORIZONTAL_ELEMENTS_SIZE * VERTICAL_ELEMENTS_SIZE
+
+YDL_OPTS = {
     # options for youtube_dl
     # simulate: true -> this will only gather information
     'format': 'bestaudio/best',
@@ -38,7 +43,6 @@ def parse(gui_output):
         name = gui_output[id_name]
         how_much = gui_output[id_how_much]
         method = gui_output[id_method]
-
 
         if validators.url(name):
             parsed_list.append(["SEARCH_FOR_TAB_NAME", name])
@@ -84,7 +88,7 @@ def get_info_all_list(links_list):
     # create the Window
     window = sg.Window('Searching for more details...', layout)
 
-    YoutubeDL(ydl_opts).cache.remove()
+    YoutubeDL(YDL_OPTS).cache.remove()
 
     output_info = []
     for i in range(len(links_list)):
@@ -136,7 +140,7 @@ def ydl_extract_info(video):
     i = 0
 
     def inside(video, i):
-        with YoutubeDL(ydl_opts) as ydl:
+        with YoutubeDL(YDL_OPTS) as ydl:
             try:
                 info_dict = ydl.extract_info(video, download=False)
             except:
@@ -217,14 +221,12 @@ def info_current_item(data):
 
 def tab_group_generator(title, layout):
     multiple = []
-    horizontal_elements_size = 10
-    for i in range((len(layout) // horizontal_elements_size) + 1):
-        start_list = i * horizontal_elements_size
-        end_list = (i + 1) * horizontal_elements_size
-        multiple = multiple + [sg.Frame("inside tabs frame", layout[start_list:end_list])]
+    for i in range((len(layout) // HORIZONTAL_ELEMENTS_SIZE) + 1):
+        start_list = i * HORIZONTAL_ELEMENTS_SIZE
+        end_list = (i + 1) * HORIZONTAL_ELEMENTS_SIZE
+        multiple = multiple + [sg.Frame("", layout[start_list:end_list])]
 
-    return sg.Tab(title=title,
-                  layout=[multiple])
+    return sg.Tab(title=title, layout=[multiple])
 
 
 def layout_generator(data):
@@ -243,11 +245,27 @@ def layout_generator(data):
     def inside_layout(tab_names, unpack):
         """
         create layout for inside of every tab
+        there is limit for count of elements per tab
         """
         for i in range(len(tab_names)):
-            inside_list.append(tab_group_generator(tab_names[i], unpack[i]))
-            # every tab have objects - tracks - to calculate per tab - unpack[i]
-            # print(unpack[i])
+            # continue here - split tabs into <max size
+            print(len(unpack[i]))
+            # PySimpleGui cannot scroll windows, so if there is too much there will be divided into smaller item size elements
+            if HORIZONTAL_VERTICAL_ELEMENTS_LIMIT < len(unpack[i]):
+                added_tabs = ((len(unpack[i]) - 1) // (HORIZONTAL_VERTICAL_ELEMENTS_LIMIT)) + 1
+                for tab_iteration in range(added_tabs):
+                    if tab_iteration == 0:
+                        current_tab_name = str(tab_names[i])
+                    elif tab_iteration > 0:
+                        current_tab_name = str(tab_names[i]) + "_" + str(tab_iteration)
+
+                    current_list_range = unpack[i][tab_iteration * HORIZONTAL_VERTICAL_ELEMENTS_LIMIT:(
+                                                                                                              tab_iteration + 1) * HORIZONTAL_VERTICAL_ELEMENTS_LIMIT]
+                    inside_list.append(tab_group_generator(current_tab_name, current_list_range))
+                    print("more than")
+
+            elif HORIZONTAL_VERTICAL_ELEMENTS_LIMIT > len(unpack[i]):
+                inside_list.append(tab_group_generator(tab_names[i], unpack[i]))
 
         return inside_list
 
@@ -332,42 +350,5 @@ def save_to_file(input_data):
     open(filename, "w", encoding="utf-8").write("output=" + output)
     return output
 
-
-# print(get_info_all_list(sample_links.nested_link_sample_data12))
-
-mock_sample = [['q1', 'https://www.youtube.com/watch?v=WlosNFMCnE4'],
-               ['q2', 'ytsearch2:test']]
-
-mock_sample_only_search = [['q2', 'ytsearch10:ariana grande']]
-
-mock_sample2 = [['q1', 'https://www.youtube.com/watch?v=WlosNFMCnE4', 'https://www.youtube.com/watch?v=q9fiSHCl5KQ'],
-                ['q2', 'https://www.youtube.com/watch?v=yslkYSjAPh4', 'https://www.youtube.com/watch?v=qu577tNp1hA'],
-                ['q3', 'QpyHrQYeoIE'],
-                ['arianna grande', 'ytsearch10:ariana grande'],
-                ['son lux', 'ytsearch12:son lux'],
-                ['flume eeeeeee', 'ytsearch6:flume']]
-
-tab_test = [['q3', 'QpyHrQYeoIE'],
-            ['long_tabtabtabtabtabname', 'QpyHrQYeoIE'],
-            ['long_tabtabtabtabtabname', 'QpyHrQYeoIE'],
-            ['long_tabtabtabtabtabname', 'QpyHrQYeoIE'],
-            ['long_tabtabtabtabtabname', 'QpyHrQYeoIE'],
-            ['long_tabtabtabtabtabname', 'QpyHrQYeoIE'],
-            ['long_tabtabtabtabtabname', 'QpyHrQYeoIE'],
-            ['long_tabtabtabtabtabname', 'QpyHrQYeoIE'],
-            ['long_tabtabtabtabtabname', 'QpyHrQYeoIE'],
-            ['long_tabtabtabtabtabname', 'QpyHrQYeoIE'],
-            ['long_tabtabtabtabtabname', 'QpyHrQYeoIE'],
-            ['long_tabtabtabtabtabname', 'QpyHrQYeoIE'],
-            ['long_tabtabtabtabtabname', 'QpyHrQYeoIE'],
-            ['long_tabtabtabtabtabname', 'QpyHrQYeoIE'],
-            ['long_tabtabtabtabtabname', 'QpyHrQYeoIE'],
-            ['long_tabtabtabtabtabname', 'QpyHrQYeoIE'],
-            ['long_tabtabtabtabtabname', 'QpyHrQYeoIE'],
-            ['long_tabtabtabtabtabname', 'QpyHrQYeoIE'],
-            ['long_tabtabtabtabtabname', 'QpyHrQYeoIE'],
-            ['long_tabtabtabtabtabname', 'QpyHrQYeoIE'],
-            ['long_tabtabtabtabtabname', 'QpyHrQYeoIE'],
-            ['q3', 'QpyHrQYeoIE']]
 
 # create_window(output__searching_results_PY.output)
