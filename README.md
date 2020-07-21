@@ -1,5 +1,7 @@
 # youtube_instrumentals
-Download multiple tracks and create instrumentals / stems automatically from youtube.
+Download multiple tracks from youtube by single query. <br/>
+(in future also and create instrumentals / stems automatically) <br/>
+(_when i learn how to combine pip, conda and docker_)
 
 # Start:
 
@@ -19,23 +21,28 @@ Python3 packages:
 # Installation (windows):
 
 ### System wide:
-I suggest using `chocolatey` - package manager (similar to Microsoft Store but in command line).
+I suggest using `chocolatey` -  (package manager, similar to Microsoft Store but in command line).
+https://chocolatey.org/install
 
 ### Installation Chocolatey:
-https://chocolatey.org/install </br>
-
-**or** <br/> run `Windows PowerShell (Admin)` - shortcut (`win`+`x`) <br/> 
+Run `Windows PowerShell (Admin)` - shortcut (`win`+`x`) <br/> 
 and type: <br/>
-`Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))`
+```
+Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
+```
 
 
 ### Installation Python:
-
-`choco install python -y`
+```
+choco install python -y
+```
 
 ### Installation ffmpeg:
-
-`choco install ffmpeg -y`
+```
+choco install ffmpeg -y
+```
 
 ### Installation Python Packages:
-`python -m pip install PySimpleGUI youtube_dl validators`
+```
+python -m pip install PySimpleGUI youtube_dl validators
+```
