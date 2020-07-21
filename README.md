@@ -1,11 +1,11 @@
 # youtube_instrumentals
-Download multiple tracks from youtube by single query. <br/>
+Download multiple tracks from youtube by single query. <br/> <br/>
 (in future also and create instrumentals / stems automatically) <br/>
 (_when i learn how to combine pip, conda and docker_)
 
 # Start:
 
-Open `init.py` file.
+Open `init.py` file in command line.
 
 ## Requirements:
 
