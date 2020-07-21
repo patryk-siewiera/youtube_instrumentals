@@ -204,7 +204,7 @@ def create_settings_window(settings):
               [sg.CBox('Window Always On Top', key='-KEEP_ON_TOP_SETTING-')],
               [TextLabel('Theme'), sg.Combo(values=THEME_COMBO, size=(13, 10), key='-THEME-')],
               [sg.Text()],
-              [sg.Text('YouTube Download Preferences', font='Any 15')],
+              [sg.Text('YouTube Download Preferences **WONT WORK FOR NOW**', font='Any 15')],
               [sg.CBox('geo-bypass', key='-GEO-BYPASS-', size=cmb_size)],
               [TextLabel('min_length'), sg.Input(key='-MIN_LENGTH-', size=inp_size), TextLabel('max_length'),
                sg.Input(key='-MAX_LENGTH-', size=inp_size)],

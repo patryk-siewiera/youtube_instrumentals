@@ -27,17 +27,31 @@ def download(input_links):
     # path_one_level_up = pathlib.Path(current_path).parents[0]
 
     # ###### Downloader
-    ydl_opts_wav = {
-        'format': 'bestaudio/best',
-        'outtmpl': str(current_path) + "/!audio/" + dt_string + '/%(title)s.%(ext)s',
-        'max_length': 1000,
-        'ignoreerrors': True,
-        'postprocessors': [{
-            'key': 'FFmpegExtractAudio',
-            'preferredcodec': 'wav',
-            'preferredquality': '320',
-        }],
-    }
+    if input_links[1] == "download_mp3":
+        ydl_opts_wav = {
+            'format': 'bestaudio/best',
+            'outtmpl': str(current_path) + "/!audio/" + dt_string + '/%(title)s.%(ext)s',
+            'max_length': 1000,
+            'ignoreerrors': True,
+            'postprocessors': [{
+                'key': 'FFmpegExtractAudio',
+                'preferredcodec': 'mp3',
+                'preferredquality': '320',
+            }],
+        }
+
+    else:
+        ydl_opts_wav = {
+            'format': 'bestaudio/best',
+            'outtmpl': str(current_path) + "/!audio/" + dt_string + '/%(title)s.%(ext)s',
+            'max_length': 1000,
+            'ignoreerrors': True,
+            'postprocessors': [{
+                'key': 'FFmpegExtractAudio',
+                'preferredcodec': 'wav',
+                'preferredquality': '320',
+            }],
+        }
 
     for i in range(progress_bar_steps):
         youtube_dl.YoutubeDL(ydl_opts_wav).download([str(input_links[0][i])])
@@ -49,3 +63,6 @@ def download(input_links):
              str(current_path) + "\ \n\ !audio \ " + dt_string + "\ \n\n\nProgram will exit end in 20s...",
              auto_close=True,
              auto_close_duration=20)
+
+    print("\n\t\t Everything done, exit...")
+    exit()
