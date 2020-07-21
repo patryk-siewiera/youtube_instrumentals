@@ -8,7 +8,7 @@ from data.output import output__searching_results_PY
 # TODO: separate gui and logic?
 
 # PySimpleGui don't allow for scrollable windows - this is max count of elements per tab
-HORIZONTAL_ELEMENTS_SIZE = 10
+HORIZONTAL_ELEMENTS_SIZE = 7
 VERTICAL_ELEMENTS_SIZE = 4
 HORIZONTAL_VERTICAL_ELEMENTS_LIMIT = HORIZONTAL_ELEMENTS_SIZE * VERTICAL_ELEMENTS_SIZE
 
