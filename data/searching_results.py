@@ -1,11 +1,8 @@
 import pprint
-import random
+
 import PySimpleGUI as sg
 import validators
 from youtube_dl import YoutubeDL
-from data import sample_links
-from data import sample_gui
-from data import output__searching_results_PY
 
 # TODO: separate gui and logic?
 
@@ -331,7 +328,7 @@ def save_to_file(input_data):
     # if depth to small, returns (...) and cut important data
     pp = pprint.PrettyPrinter(depth=10)
     output = pp.pformat(input_data)
-    filename = "data/output__searching_results_PY.py"
+    filename = "data/output/output__searching_results_PY.py"
     open(filename, "w", encoding="utf-8").write("output=" + output)
     print("\nRaw youtube data in file (PPrint):\n", filename, "\n")
     return output

@@ -1,8 +1,4 @@
-import gui
-import searching_results
-import backend_ydl
-import clean_my_project
-import download_list_link
+from data import gui, download_list_link, backend_ydl, searching_results, clean_my_project
 
 # clean_my_project.main()
 

@@ -1,7 +1,9 @@
-import youtube_dl
-from datetime import datetime
-import PySimpleGUI as sg
 import pathlib
+import os
+from datetime import datetime
+
+import PySimpleGUI as sg
+import youtube_dl
 
 input_links = (['https://www.youtube.com/watch?v=mu32phZdlZo', 'https://www.youtube.com/watch?v=VofkCG33xFs'], "method")
 
@@ -21,10 +23,13 @@ def download(input_links):
 
     event, values = window.read(timeout=10)
 
+    current_path = pathlib.Path().absolute()
+    path_one_level_up = pathlib.Path(current_path).parents[0]
+
     # ###### Downloader
     ydl_opts_wav = {
         'format': 'bestaudio/best',
-        'outtmpl': '!audio/' + dt_string + '/%(uploader)s/%(title)s.%(ext)s',
+        'outtmpl': str(path_one_level_up) + "/!audio/" + dt_string + '/%(uploader)s/%(title)s.%(ext)s',
         'max_length': 1000,
         'ignoreerrors': True,
         'postprocessors': [{
@@ -41,10 +46,11 @@ def download(input_links):
 
     window.close()
 
-    current_path = pathlib.Path().absolute()
-
-    sg.popup("Files are downloaded in folder:\n", str(current_path) + "\!download\n\n\nProgram will exit end in 10s...",
+    sg.popup("Files are downloaded in folder:\n",
+             str(current_path) + "\ \n\ !audio \ " + dt_string + "\ \n\n\nProgram will exit end in 20s...",
              auto_close=True,
-             auto_close_duration=10)
+             auto_close_duration=20)
 
 # download(input_links)
+# current_path = pathlib.Path().absolute()
+# print(str(pathlib.Path(current_path).parents[0]))

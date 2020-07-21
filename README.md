@@ -39,4 +39,3 @@ and type: <br/>
 
 ### Installation Python Packages:
 `python -m pip install PySimpleGUI youtube_dl validators`
-
