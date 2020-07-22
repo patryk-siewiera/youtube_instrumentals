@@ -58,13 +58,12 @@ VALUES_START = {
 
 SETTINGS_FILE = os.path.join(os.path.dirname(__file__), r'settings_file.cfg')
 DEFAULT_SETTINGS = {'theme': sg.theme(),
-                    'keep_on_top_setting': False, 'min_length': 10, 'max_length': 1000,
+                    'min_length': 10, 'max_length': 1000,
                     'min_views': 1, 'max_views': 10000000000, 'key': KEYS_COMBO[0], 'key_range': 12,
                     'bpm': BPM_COMBO[8], 'bpm_range': 150, 'if_tunebat_using': False, 'geo-bypass': False}
 
 # "Map" from the settings dictionary keys to the window's element keys
 SETTINGS_KEYS_TO_ELEMENT_KEYS = {'theme': '-THEME-',
-                                 'keep_on_top_setting': '-KEEP_ON_TOP_SETTING-',
                                  'min_length': '-MIN_LENGTH-', 'max_length': '-MAX_LENGTH-',
                                  'min_views': '-MIN_VIEWS-', 'max_views': '-MAX_VIEWS-',
                                  'key': '-KEY-', 'key_range': '-KEY_RANGE-',
@@ -201,7 +200,6 @@ def create_settings_window(settings):
     cmb_size = (13, 13)
 
     layout = [[sg.Text('Settings', font='Any 15')],
-              [sg.CBox('Window Always On Top', key='-KEEP_ON_TOP_SETTING-')],
               [TextLabel('Theme'), sg.Combo(values=THEME_COMBO, size=(13, 10), key='-THEME-')],
               [sg.Text()],
               [sg.Text('YouTube Download Preferences **WONT WORK FOR NOW**', font='Any 15')],
@@ -300,7 +298,6 @@ def gui_1line(value, settings, event_list):
                         layout=(
                                 gui_menu() + gui_info_row() + gui_input_row_1 + gui_empty_lines() + gui_add10() +
                                 gui_download_exit()),
-                        keep_on_top=settings['keep_on_top_setting'],
                         icon=ICON_PATH)
 
     event, value = window1.read()
@@ -359,7 +356,6 @@ def gui_10line(value, settings, event_list):
                          layout=(
                                  gui_menu() + gui_info_row() + gui_input_row_10 + gui_empty_lines() + gui_oneline() +
                                  gui_download_exit()),
-                         keep_on_top=settings['keep_on_top_setting'],
                          icon=ICON_PATH)
 
     event, value = window10.read()
