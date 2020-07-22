@@ -27,6 +27,7 @@ STEMS_METHODS = ['1: Without Separation : Whole track',
 MENU_LAYOUT = [["Help", ['GitHub Page', 'About']]]
 BPM_COMBO = [40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160, 170, 180, 190, 200, 210, 220, 230, 240, 250,
              260, 270, 280, 290, 300, 310]
+GEO_BYPASS = [True, False]
 
 KEYS_COMBO = ['C / a',
               'G / e',
@@ -203,10 +204,10 @@ def create_settings_window(settings):
               [TextLabel('Theme'), sg.Combo(values=THEME_COMBO, size=(13, 10), key='-THEME-')],
               [sg.Text()],
               [sg.Text('YouTube Download Preferences **WONT WORK FOR NOW**', font='Any 15')],
-              [sg.CBox('geo-bypass', key='-GEO-BYPASS-', size=cmb_size)],
-              [TextLabel('min_length'), sg.Input(key='-MIN_LENGTH-', size=inp_size), TextLabel('max_length'),
+              [TextLabel("Bypass Geo Restriction:"), sg.Combo(GEO_BYPASS, key='-GEO-BYPASS-', size=cmb_size)],
+              [TextLabel('Minimum Length'), sg.Input(key='-MIN_LENGTH-', size=inp_size), TextLabel('Maximum Length'),
                sg.Input(key='-MAX_LENGTH-', size=inp_size)],
-              [TextLabel('min_views'), sg.Input(key='-MIN_VIEWS-', size=inp_size), TextLabel('max_views'),
+              [TextLabel('Minimum Views'), sg.Input(key='-MIN_VIEWS-', size=inp_size), TextLabel('Maximum Views'),
                sg.Input(key='-MAX_VIEWS-', size=inp_size)],
               [sg.Text()],
               [sg.Text('Tunebat Scraping Preferences', font='Any 15', visible=False)],
