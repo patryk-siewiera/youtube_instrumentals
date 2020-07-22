@@ -44,6 +44,8 @@ choco install python -y
 choco install ffmpeg -y
 ```
 
+After installation with `chocolatey` **restart** `Windows PowerShell (Admin)` (close and open it again).
+
 ### Installation Python Packages:
 ```
 python -m pip install PySimpleGUI youtube_dl validators

@@ -9,7 +9,7 @@ CWD = "{0}\\!download".format(os.getcwd())
 
 # size of each row
 ROW1 = (50, 1)  # keywords
-ROW2 = (10, 1)  # how much
+ROW2 = (10, 1)  # how many
 ROW3 = (50, 1)  # method selection
 OUTPUT_ROW = (80, 1)  # folder output
 
@@ -53,7 +53,7 @@ ICON_PATH = ""
 
 # for testing
 VALUES_START = {
-    10: '', 11: 0, 12: '1: Without Separation : Whole track',
+    10: '', 11: 1, 12: '1: Without Separation : Whole track',
 }
 
 SETTINGS_FILE = os.path.join(os.path.dirname(__file__), r'settings_file.cfg')
@@ -112,7 +112,7 @@ def gui_menu():
 
 def gui_info_row():
     """add information about every row """
-    return [[sg.Text('Keywords, Link or Playlist YouTube', size=(44, 1), key="11"), sg.Text('How much', size=(10, 1))]]
+    return [[sg.Text('Keywords, Link or Playlist YouTube', size=(44, 1), key="11"), sg.Text('How many', size=(10, 1))]]
 
 
 def gui_output_folder():
@@ -188,7 +188,7 @@ def save_settings(settings_file, settings, values):
         jsondump(settings, f, indent=4, sort_keys=True)
 
 
-##################### Make a settings window #####################
+# #################### Make a settings window #####################
 def create_settings_window(settings):
     """gui for SETTINGS WINDOW create"""
     sg.theme(settings['theme'])
@@ -218,9 +218,9 @@ def create_settings_window(settings):
               [sg.Combo(KEYS_COMBO, key='-KEY-', size=cmb_size, visible=False),
                sg.Input(key='-KEY_RANGE-', size=inp_size, visible=False)],
               [sg.Text('Spleeter Preferences (separation engine)', font='Any 15', visible=False)],
-              [sg.Button('  Reset to Defaults  ', key='Reset to Defaults')],
-              [sg.Button('   Save   ', key='Save', button_color=BUTTON_YES),
-               sg.Button('   Exit   ', key='Exit', button_color=BUTTON_NO)]]
+              [sg.Button('           Reset to Defaults           ', key='Reset to Defaults')],
+              [sg.Button('      Save     ', key='Save', button_color=BUTTON_YES),
+               sg.Button('Discard Changes', key='Exit', button_color=BUTTON_NO)]]
 
     window = sg.Window('Settings', layout, keep_on_top=True, finalize=True)
 
@@ -237,18 +237,28 @@ def create_settings_window(settings):
 
 def validation(value):
     """validate input values for youtube-dl, and between pages"""
-    for i in range((len(value) // 3) - 1):
+
+    # validation HOW_MUCH value, must be type(x)==int , and x<99
+    for i in range((len(value) // 3)):
         i = i + 1
         # iterator for second table
-        current = value[1 + 10 * i]
+        current_value = value[1 + 10 * i]
         try:
-            if current == None:
-                current = 0
+            if current_value == None:
+                # if how_many is empty, write as == 0
+                current_value = 0
             else:
-                current = int(current)
+                current_value = int(current_value)
+                # max value of how_many is == 99
+                if current_value > 99:
+                    value[1 + 10 * i] = 99
         except:
+            # if value isn't INT (for ex some string) - set it to == 0
             value[1 + 10 * i] = 0
 
+        # print("current:\t", current_value)
+
+    # validation for stem methods - todo: remove stem methods completly from this page
     for j in range((len(value) // 3) - 1):
         j = j + 1
         # iterator for third table
@@ -282,7 +292,7 @@ def gui_1line(value, settings, event_list):
     sg.theme(settings['theme'])
     gui_input_row_1 = [[sg.InputText(str(value[10]), size=ROW1, key=10),
                         sg.Combo(HOW_MUCH_COMBO,
-                                 default_value=1, size=ROW2, key=11),
+                                 default_value=value[11], size=ROW2, key=11),
                         sg.Combo(STEMS_METHODS, size=ROW3, default_value=value[12], key=12, visible=False)]]
 
     # initialize specific part
@@ -367,11 +377,11 @@ def main():
     value, settings, event = gui_1line(VALUES_START, settings, event)
     while True:  # Event Loop
 
-        if event[-1] == "add10":
-            value, settings, event = gui_10line(value, settings, event)
-
         if event[-1] == "one_line":
             value, settings, event = gui_1line(value, settings, event)
+
+        if event[-1] == "add10":
+            value, settings, event = gui_10line(value, settings, event)
 
         if event[-1] == 'Change Settings':
             event, settings = change_settings(window, settings, event)
