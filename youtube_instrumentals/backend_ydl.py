@@ -1,13 +1,15 @@
 import youtube_dl
 import validators
 
-ydl_opts_wav = {
+# playlistend -> to get name of creator of playlist - you need only to parse first element
+YDL_SIMULATE_OPTS = {
     # options for youtube_dl
     # simulate: true -> this will only gather information
     'min_views': 10000,
     'max_views': 10000000000000,
     'ignoreerrors': True,
     'simulate': True,
+    'playlistend': 1
 }
 
 
@@ -27,22 +29,20 @@ def parse(gui_output):
 
         # print(name)
 
-        if validators.url(name):
+        # skip empty queries
+        if name == "" or name is None or how_much == 0:
+            continue
+        elif validators.url(name):
             print("Searching more details about URL...\t\t", name)
-            youtube_dl_info_parser = youtube_dl.YoutubeDL(ydl_opts_wav).extract_info(name)
+            youtube_dl_info_parser = youtube_dl.YoutubeDL(YDL_SIMULATE_OPTS).extract_info(name)
             uploader = youtube_dl_info_parser['uploader']
             parsed_list.append([uploader, name])
-
-        # skip empty queries
-        elif name == "" or name is None or how_much == 0:
-            continue
-
         elif not validators.url(name):
             # remove chars that aren't letters or numbers
             alphanumeric = [character for character in name if (character.isalnum() or character.isspace())]
             name = "".join(alphanumeric)
             # query generator
-            query = "ytsearch" + str(how_much) + ":" + str(name)
+            query = f'ytsearch{how_much}:{name}'
             output = [name, query]
             parsed_list.append(output)
 

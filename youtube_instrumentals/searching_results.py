@@ -48,7 +48,7 @@ def parse(gui_output):
             alphanumeric = [character for character in name if (character.isalnum() or character.isspace())]
             name = "".join(alphanumeric)
             # query generator
-            query = "ytsearch" + str(how_much) + ":" + str(name)
+            query = f'ytsearch{how_much}:{name}'
             output = [name, query]
             parsed_list.append(output)
 
@@ -143,10 +143,7 @@ def ydl_extract_info(video):
                 inside(video, i)
         return info_dict
 
-    try:
-        output = inside(video, i)
-    except:
-        pass
+    output = inside(video, i)
 
     return output
 
@@ -264,11 +261,13 @@ def layout_generator(data):
     inside_list = inside_layout(tab_names, unpack)
 
     print(inside_list)
-    button_size = (32, 1)
+    button_size = (32, 2)
     outside_layout = [
         [sg.TabGroup([inside_list])],
-        [sg.Button('Download WAV (best quality)', key="download_wav", size=button_size),
-         sg.Button('Download MP3 (smallest size)', key="download_mp3", size=button_size)]]
+        [sg.Button('Download and covert to WAV', key="download_wav", size=button_size),
+         sg.Button('Download and convert to MP3', key="download_mp3", size=button_size),
+         sg.Button('Download WebM \n    (without postprocessing)', key="download_webm", size=button_size),
+         ]]
 
     # pprint.pprint(inside_list)
 
@@ -341,6 +340,5 @@ def save_to_file(input_data):
     filename = "youtube_instrumentals/output/output__searching_results_PY.py"
     open(filename, "w", encoding="utf-8").write("output=" + output)
     return output
-
 
 # create_window(output__searching_results_PY.output)

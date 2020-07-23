@@ -249,7 +249,7 @@ def validation_main_window(value):
         # iterator for second table
         current_value = value[1 + 10 * i]
         try:
-            if current_value == None:
+            if current_value is None:
                 # if how_many is empty, write as == 0
                 current_value = 0
             else:
@@ -257,7 +257,7 @@ def validation_main_window(value):
                 # max value of how_many is == 99
                 if current_value > 99:
                     value[1 + 10 * i] = 99
-        except:
+        except ValueError:
             # if value isn't INT (for ex some string) - set it to == 0
             value[1 + 10 * i] = 0
 

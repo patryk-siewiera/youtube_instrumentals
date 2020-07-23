@@ -28,7 +28,7 @@ def download(input_links):
 
     # ###### Downloader
     if input_links[1] == "download_mp3":
-        ydl_opts_wav = {
+        ydl_opts = {
             'format': 'bestaudio/best',
             'outtmpl': str(current_path) + "/!audio/" + dt_string + '/%(title)s.%(ext)s',
             'max_length': 1000,
@@ -40,8 +40,8 @@ def download(input_links):
             }],
         }
 
-    else:
-        ydl_opts_wav = {
+    elif input_links[1] == "download_wav":
+        ydl_opts = {
             'format': 'bestaudio/best',
             'outtmpl': str(current_path) + "/!audio/" + dt_string + '/%(title)s.%(ext)s',
             'max_length': 1000,
@@ -52,9 +52,16 @@ def download(input_links):
                 'preferredquality': '320',
             }],
         }
+    elif input_links[1] == "download_webm":
+        ydl_opts = {
+            'format': 'bestaudio/best',
+            'outtmpl': str(current_path) + "/!audio/" + dt_string + '/%(title)s.%(ext)s',
+            'max_length': 1000,
+            'ignoreerrors': True,
+        }
 
     for i in range(progress_bar_steps):
-        youtube_dl.YoutubeDL(ydl_opts_wav).download([str(input_links[0][i])])
+        youtube_dl.YoutubeDL(ydl_opts).download([str(input_links[0][i])])
         progress_bar.UpdateBar(i + 1)
 
     window.close()

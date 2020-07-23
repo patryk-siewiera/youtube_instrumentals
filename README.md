@@ -7,7 +7,10 @@ Download multiple tracks from youtube by single query. <br/> <br/>
 
 # Start:
 
-Open `init.py` file in command line.
+Open `main.py` file in command line.
+```
+python main.py
+```
 
 ## Requirements:
 
