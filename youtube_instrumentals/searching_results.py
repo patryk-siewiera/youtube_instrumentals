@@ -3,7 +3,7 @@ import pprint
 import PySimpleGUI as sg
 import validators
 from youtube_dl import YoutubeDL
-from data.output import output__searching_results_PY
+from youtube_instrumentals.output import output__searching_results_PY
 
 # TODO: separate gui and logic?
 
@@ -153,8 +153,8 @@ def ydl_extract_info(video):
 
 def info_current_item(data):
     '''
-    format data for easier reading
-    :param data: data parsed from get_info_all_list
+    format youtube_instrumentals for easier reading
+    :param data: youtube_instrumentals parsed from get_info_all_list
     :return:
     '''
     output_list = []
@@ -288,7 +288,7 @@ def create_window(data_input):
 
     sg.theme('dark')
 
-    # unpack all of data
+    # unpack all of youtube_instrumentals
     layout = layout_generator(data_input)
     # activate frame here in layout =
     window = sg.Window('Download selected tracks', layout=layout,
@@ -335,10 +335,10 @@ def save_to_file(input_data):
     """
     save input_data, in output__searching_results_PY.py file with pprint formatting
     """
-    # if depth to small, returns (...) and cut important data
+    # if depth to small, returns (...) and cut important youtube_instrumentals
     pp = pprint.PrettyPrinter(depth=10)
     output = pp.pformat(input_data)
-    filename = "data/output/output__searching_results_PY.py"
+    filename = "youtube_instrumentals/output/output__searching_results_PY.py"
     open(filename, "w", encoding="utf-8").write("output=" + output)
     return output
 

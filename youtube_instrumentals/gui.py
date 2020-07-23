@@ -124,7 +124,7 @@ def gui_add10():
 
 
 def gui_download_exit():
-    """gui button download: returns all data to youtube-dl module
+    """gui button download: returns all youtube_instrumentals to youtube-dl module
     #TODO: youtube-dl module """
     return [[sg.Submit(button_text="         Download        ", button_color=BUTTON_YES, key="Download"),
              sg.Button('           Exit           ', key='Exit', button_color=BUTTON_NO)]]
@@ -136,7 +136,7 @@ def gui_theme_picker():
 
 
 def current_data(data, default_data):
-    """keep data during change of pages in gui"""
+    """keep youtube_instrumentals during change of pages in gui"""
     pass
 
 
