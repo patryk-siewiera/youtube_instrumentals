@@ -15,18 +15,10 @@ HORIZONTAL_VERTICAL_ELEMENTS_LIMIT = HORIZONTAL_ELEMENTS_SIZE * VERTICAL_ELEMENT
 YDL_OPTS = {
     # options for youtube_dl
     # simulate: true -> this will only gather information
-    'format': 'bestaudio/best',
-    'outtmpl': '!download/%(uploader)s/%(title)s.%(ext)s',
     'min_views': 10000,
     'max_views': 10000000000000,
-    'max_length': 1000,
     'ignoreerrors': True,
     'simulate': True,
-    'postprocessors': [{
-        'key': 'FFmpegExtractAudio',
-        'preferredcodec': 'wav',
-        'preferredquality': '320',
-    }],
 }
 
 

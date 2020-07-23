@@ -29,19 +29,6 @@ BPM_COMBO = [40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160, 170, 180
              260, 270, 280, 290, 300, 310]
 GEO_BYPASS = [True, False]
 
-KEYS_COMBO = ['C / a',
-              'G / e',
-              'D / b',
-              'A / f#',
-              'E / c#',
-              '(B/C#) / g#',
-              '(Gb/F#) / (eb / d#)',
-              '(Db/C#) / bb',
-              'Ab / f',
-              'Eb / c',
-              'Bb / g',
-              'F / d']
-
 THEME_COMBO = [
     'LightGrey3',
     'BrownBlue',
@@ -59,17 +46,13 @@ VALUES_START = {
 
 SETTINGS_FILE = os.path.join(os.path.dirname(__file__), r'settings_file.cfg')
 DEFAULT_SETTINGS = {'theme': sg.theme(),
-                    'min_length': 10, 'max_length': 1000,
-                    'min_views': 1, 'max_views': 10000000000, 'key': KEYS_COMBO[0], 'key_range': 12,
-                    'bpm': BPM_COMBO[8], 'bpm_range': 150, 'if_tunebat_using': False, 'geo-bypass': False}
+                    'min_views': 1, 'max_views': 100000000000,
+                    'bpm': BPM_COMBO[8], 'bpm_range': 150, 'geo-bypass': False}
 
 # "Map" from the settings dictionary keys to the window's element keys
 SETTINGS_KEYS_TO_ELEMENT_KEYS = {'theme': '-THEME-',
-                                 'min_length': '-MIN_LENGTH-', 'max_length': '-MAX_LENGTH-',
                                  'min_views': '-MIN_VIEWS-', 'max_views': '-MAX_VIEWS-',
-                                 'key': '-KEY-', 'key_range': '-KEY_RANGE-',
-                                 'bpm': '-BPM-', 'bpm_range': '-BPM_RANGE-',
-                                 'if_tunebat_using': '-IF_TUNEBAT_USING-', 'geo-bypass': '-GEO-BYPASS-', }
+                                 'geo-bypass': '-GEO-BYPASS-', }
 
 
 def gui_help(event_list):
@@ -205,17 +188,10 @@ def create_settings_window(settings):
               [sg.Text()],
               [sg.Text('YouTube Download Preferences **WONT WORK FOR NOW**', font='Any 15')],
               [TextLabel("Bypass Geo Restriction:"), sg.Combo(GEO_BYPASS, key='-GEO-BYPASS-', size=cmb_size)],
-              [TextLabel('Minimum Length'), sg.Input(key='-MIN_LENGTH-', size=inp_size), TextLabel('Maximum Length'),
-               sg.Input(key='-MAX_LENGTH-', size=inp_size)],
               [TextLabel('Minimum Views'), sg.Input(key='-MIN_VIEWS-', size=inp_size), TextLabel('Maximum Views'),
                sg.Input(key='-MAX_VIEWS-', size=inp_size)],
               [sg.Text()],
               [sg.Text('Tunebat Scraping Preferences', font='Any 15', visible=False)],
-              [sg.CBox('Use TuneBat to specify bpm and key', key='-IF_TUNEBAT_USING-', visible=False)],
-              [sg.Combo(BPM_COMBO, key='-BPM-', size=cmb_size, visible=False),
-               sg.Input(key='-BPM_RANGE-', size=inp_size, visible=False)],
-              [sg.Combo(KEYS_COMBO, key='-KEY-', size=cmb_size, visible=False),
-               sg.Input(key='-KEY_RANGE-', size=inp_size, visible=False)],
               [sg.Text('Spleeter Preferences (separation engine)', font='Any 15', visible=False)],
               [sg.Button('           Reset to Defaults           ', key='Reset to Defaults')],
               [sg.Button('      Save     ', key='Save', button_color=BUTTON_YES),
@@ -230,11 +206,41 @@ def create_settings_window(settings):
             window[SETTINGS_KEYS_TO_ELEMENT_KEYS[key]].update(value=settings[key])
         except Exception as e:
             print(f'Problem updating PySimpleGUI window from settings. Key = {key}')
-
     return window
 
 
-def validation(value):
+def validation_settings(dictionary):
+    """
+    theme, geo-bypass -> check if they are in standard list of objects
+    min / max views -> accepts only numbers from typical range
+    """
+
+    if not dictionary['-THEME-'] in THEME_COMBO:
+        dictionary['-THEME-'] = "BrownBlue"
+        print("Validation: is not correct value: \t -THEME-")
+
+    if not dictionary['-GEO-BYPASS-'] in GEO_BYPASS:
+        dictionary['-GEO-BYPASS-'] = False
+        print("Validation: is not correct value: \t -GEO-BYPASS-")
+
+    try:
+        dictionary["-MIN_VIEWS-"] = int(dictionary["-MIN_VIEWS-"])
+        if not dictionary["-MIN_VIEWS-"] in range(0, 100000000001):
+            dictionary["-MIN_VIEWS-"] = 0
+    except ValueError:
+        dictionary["-MIN_VIEWS-"] = 0
+
+    try:
+        dictionary["-MAX_VIEWS-"] = int(dictionary["-MAX_VIEWS-"])
+        if not dictionary["-MAX_VIEWS-"] in range(0, 100000000001):
+            dictionary["-MAX_VIEWS-"] = 100000000000
+    except ValueError:
+        dictionary["-MAX_VIEWS-"] = 100000000000
+
+    return dictionary
+
+
+def validation_main_window(value):
     """validate input values for youtube-dl, and between pages"""
 
     # validation HOW_MUCH value, must be type(x)==int , and x<99
@@ -272,6 +278,9 @@ def validation(value):
 def change_settings(window, settings, event):
     """backend:  for settings menu"""
     current_event, values = create_settings_window(settings).read(close=True)
+
+    validation_settings(values)
+
     if current_event == 'Save':
         window = None
         save_settings(SETTINGS_FILE, settings, values)
@@ -305,13 +314,14 @@ def gui_1line(value, settings, event_list):
     window1.close()
     event_list.append(event)
 
-    value = validation(value)
+    value = validation_main_window(value)
 
     return value, settings, event_list
 
 
 def gui_10line(value, settings, event_list):
     """menu for 10 rows downloading"""
+    sg.theme(settings['theme'])
     gui_input_row_10 = [[sg.InputText(str(value[10]), size=ROW1, key=10),
                          sg.Combo(HOW_MUCH_COMBO,
                                   size=ROW2, key=11, default_value=value[11]),
@@ -363,7 +373,7 @@ def gui_10line(value, settings, event_list):
     window10.close()
     event_list.append(event)
 
-    value = validation(value)
+    value = validation_main_window(value)
 
     return value, settings, event_list
 
