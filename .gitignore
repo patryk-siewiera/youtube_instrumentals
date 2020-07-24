@@ -136,3 +136,8 @@ dmypy.json
 
 # output files
 /youtube_instrumentals/output/output__searching_results_PY.py
+/youtube_instrumentals/spleeterData/
+
+#audio
+.mp3
+.wav

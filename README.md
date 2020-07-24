@@ -53,3 +53,41 @@ After installation with `chocolatey` **restart** `Windows PowerShell (Admin)` (c
 ```
 python -m pip install PySimpleGUI youtube_dl validators
 ```
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+
+
+# work in progress below
+## move from pip -> conda
+ 
+## Chocolatey (package manager):
+Run `Windows PowerShell (Admin)` - by shortcut (`win`+`x`) <br/> 
+and type: <br/>
+```
+Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
+```
+ **restart** `Windows PowerShell (Admin)` (close and open it again).
+
+## Miniconda 3.8
+```
+choco install miniconda3 --params="'/AddToPath:1'" -y
+```
+ **restart** `Windows PowerShell (Admin)` (close and open it again).
+
+```
+conda install -c conda-forge youtube-dl validators pysimplegui spleeter -y
+```
+ 
+ 
