@@ -4,9 +4,6 @@ from json import (load as jsonload, dump as jsondump)
 
 import PySimpleGUI as sg
 
-# current directory folder
-CWD = "{0}\\!download".format(os.getcwd())
-
 # size of each row
 ROW1 = (50, 1)  # keywords
 ROW2 = (10, 1)  # how many
@@ -260,8 +257,6 @@ def validation_main_window(value):
         except ValueError:
             # if value isn't INT (for ex some string) - set it to == 0
             value[1 + 10 * i] = 0
-
-        # print("current:\t", current_value)
 
     # validation for stem methods - todo: remove stem methods completly from this page
     for j in range((len(value) // 3) - 1):

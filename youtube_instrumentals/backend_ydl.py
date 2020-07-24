@@ -27,8 +27,6 @@ def parse(gui_output):
         how_much = gui_output[id_how_much]
         method = gui_output[id_method]
 
-        # print(name)
-
         # skip empty queries
         if name == "" or name is None or how_much == 0:
             continue

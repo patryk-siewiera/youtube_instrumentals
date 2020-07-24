@@ -5,10 +5,15 @@ from datetime import datetime
 import PySimpleGUI as sg
 import youtube_dl
 
-input_links = (['https://www.youtube.com/watch?v=mu32phZdlZo', 'https://www.youtube.com/watch?v=VofkCG33xFs'], "method")
+input_links = (
+['https://www.youtube.com/watch?v=mu32phZdlZo', 'https://www.youtube.com/watch?v=VofkCG33xFs'], "download_mp3")
+
+# max size of playlist
+PLAYLIST_END_LIMIT = 99
 
 
 def download(input_links):
+    print("\n\tStart downloading...")
     progress_bar_steps = len(input_links[0])
 
     # datetime object containing current date and time, to folder naming
@@ -24,15 +29,17 @@ def download(input_links):
     event, values = window.read(timeout=10)
 
     current_path = pathlib.Path().absolute()
-    # path_one_level_up = pathlib.Path(current_path).parents[0]
+    name_download_wildcard = "%(title)s.%(ext)s"
+    audio_folder = str(current_path.joinpath("!audio", dt_string, name_download_wildcard))
 
     # ###### Downloader
     if input_links[1] == "download_mp3":
         ydl_opts = {
             'format': 'bestaudio/best',
-            'outtmpl': str(current_path) + "/!audio/" + dt_string + '/%(title)s.%(ext)s',
+            'outtmpl': audio_folder,
             'max_length': 1000,
             'ignoreerrors': True,
+            'playlistend': PLAYLIST_END_LIMIT,
             'postprocessors': [{
                 'key': 'FFmpegExtractAudio',
                 'preferredcodec': 'mp3',
@@ -43,9 +50,10 @@ def download(input_links):
     elif input_links[1] == "download_wav":
         ydl_opts = {
             'format': 'bestaudio/best',
-            'outtmpl': str(current_path) + "/!audio/" + dt_string + '/%(title)s.%(ext)s',
+            'outtmpl': audio_folder,
             'max_length': 1000,
             'ignoreerrors': True,
+            'playlistend': PLAYLIST_END_LIMIT,
             'postprocessors': [{
                 'key': 'FFmpegExtractAudio',
                 'preferredcodec': 'wav',
@@ -55,7 +63,8 @@ def download(input_links):
     elif input_links[1] == "download_webm":
         ydl_opts = {
             'format': 'bestaudio/best',
-            'outtmpl': str(current_path) + "/!audio/" + dt_string + '/%(title)s.%(ext)s',
+            'playlistend': PLAYLIST_END_LIMIT,
+            'outtmpl': audio_folder,
             'max_length': 1000,
             'ignoreerrors': True,
         }
@@ -65,7 +74,7 @@ def download(input_links):
         progress_bar.UpdateBar(i + 1)
 
     window.close()
-
+    print("\tDownloading Finished...\n")
     sg.popup("Files are downloaded in folder:\n",
              str(current_path) + "\ \n\ !audio \ " + dt_string + "\ \n\n\nProgram will exit end in 20s...",
              auto_close=True,

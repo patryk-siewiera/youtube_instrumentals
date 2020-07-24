@@ -8,7 +8,7 @@ from youtube_instrumentals.output import output__searching_results_PY
 # TODO: separate gui and logic?
 
 # PySimpleGui don't allow for scrollable windows - this is max count of elements per tab
-HORIZONTAL_ELEMENTS_SIZE = 7
+HORIZONTAL_ELEMENTS_SIZE = 9
 VERTICAL_ELEMENTS_SIZE = 4
 HORIZONTAL_VERTICAL_ELEMENTS_LIMIT = HORIZONTAL_ELEMENTS_SIZE * VERTICAL_ELEMENTS_SIZE
 
@@ -17,6 +17,7 @@ YDL_OPTS = {
     # simulate: true -> this will only gather information
     'min_views': 10000,
     'max_views': 10000000000000,
+    'playlistend': 99,
     'ignoreerrors': True,
     'simulate': True,
 }
@@ -238,7 +239,6 @@ def layout_generator(data):
         """
         for i in range(len(tab_names)):
             # continue here - split tabs into <max size
-            print(len(unpack[i]))
             # PySimpleGui cannot scroll windows, so if there is too much there will be divided into smaller item size elements
             if HORIZONTAL_VERTICAL_ELEMENTS_LIMIT < len(unpack[i]):
                 added_tabs = ((len(unpack[i]) - 1) // (HORIZONTAL_VERTICAL_ELEMENTS_LIMIT)) + 1
@@ -260,7 +260,7 @@ def layout_generator(data):
 
     inside_list = inside_layout(tab_names, unpack)
 
-    print(inside_list)
+    print("\tEnd of searching...\n")
     button_size = (32, 2)
     outside_layout = [
         [sg.TabGroup([inside_list])],
@@ -268,8 +268,6 @@ def layout_generator(data):
          sg.Button('Download and convert to MP3', key="download_mp3", size=button_size),
          sg.Button('Download WebM \n    (without postprocessing)', key="download_webm", size=button_size),
          ]]
-
-    # pprint.pprint(inside_list)
 
     return outside_layout
 

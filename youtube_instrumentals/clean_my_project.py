@@ -19,7 +19,7 @@ def move_files(extension, folder):
     print('\n_* def move_files():  INPUT ==  ext==', extension, " folder==", folder)
     sourcepath = Path().absolute()
     sourcefiles = os.listdir(sourcepath)
-    destination = str(sourcepath) + "\\" + folder
+    destination = str(sourcepath.joinpath(folder))
 
     for file in sourcefiles:
         if file.endswith(extension):
