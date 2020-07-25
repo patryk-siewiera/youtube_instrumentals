@@ -6,13 +6,20 @@ import PySimpleGUI as sg
 import youtube_dl
 
 input_links = (
-['https://www.youtube.com/watch?v=mu32phZdlZo', 'https://www.youtube.com/watch?v=VofkCG33xFs'], "download_mp3")
+    ['https://www.youtube.com/watch?v=mu32phZdlZo', 'https://www.youtube.com/watch?v=VofkCG33xFs'], "stem2")
 
 # max size of playlist
 PLAYLIST_END_LIMIT = 99
 
 
-def download(input_links):
+def selector(input_links):
+    if input_links[1] == "download_mp3" or input_links[1] == "download_wav" or input_links[1] == "download_webm":
+        return download_only(input_links)
+    elif input_links[1] == "stem2" or input_links[1] == "stem4" or input_links[1] == "stem5":
+        print("selector second")
+
+
+def download_only(input_links):
     print("\n\tStart downloading...")
     progress_bar_steps = len(input_links[0])
 
@@ -76,9 +83,12 @@ def download(input_links):
     window.close()
     print("\tDownloading Finished...\n")
     sg.popup("Files are downloaded in folder:\n",
-             str(current_path) + "\ \n\ !audio \ " + dt_string + "\ \n\n\nProgram will exit end in 20s...",
+             str(current_path.joinpath("!audio", dt_string)) + "\ \n\n\nProgram will exit end in 20s...",
              auto_close=True,
              auto_close_duration=20)
 
     print("\n\t\t Everything done, exit...")
     exit()
+
+
+selector(input_links)

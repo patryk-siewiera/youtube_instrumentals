@@ -261,13 +261,22 @@ def layout_generator(data):
     inside_list = inside_layout(tab_names, unpack)
 
     print("\tEnd of searching...\n")
-    button_size = (32, 2)
+    button_size = (32, 1)
+    button_color_download_only = ("White", "Green")
+    button_color_spleeter = ("White", "Blue")
     outside_layout = [
         [sg.TabGroup([inside_list])],
-        [sg.Button('Download and covert to WAV', key="download_wav", size=button_size),
-         sg.Button('Download and convert to MP3', key="download_mp3", size=button_size),
-         sg.Button('Download WebM \n    (without postprocessing)', key="download_webm", size=button_size),
-         ]]
+        [sg.Text("Download only:\t\t"),
+         sg.Button('WAV', key="download_wav", size=button_size, button_color=button_color_download_only),
+         sg.Button('MP3', key="download_mp3", size=button_size, button_color=button_color_download_only),
+         sg.Button('WebM (without postprocessing)', key="download_webm", size=button_size,
+                   button_color=button_color_download_only)],
+        [sg.Text("Download and Separate:\t"),
+         sg.Button("Vocals / Accompaniment", key="stem2", size=button_size, button_color=button_color_spleeter),
+         sg.Button("Vocals / Drums / Bass / Other", key="stem4", size=button_size, button_color=button_color_spleeter),
+         sg.Button("Vocals / Drums / Bass / Piano / Other", key="stem5", size=button_size,
+                   button_color=button_color_spleeter)],
+    ]
 
     return outside_layout
 
@@ -339,4 +348,5 @@ def save_to_file(input_data):
     open(filename, "w", encoding="utf-8").write("output=" + output)
     return output
 
-# create_window(output__searching_results_PY.output)
+
+print(create_window(output__searching_results_PY.output))
