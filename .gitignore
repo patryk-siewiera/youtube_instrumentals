@@ -141,3 +141,4 @@ dmypy.json
 #audio
 .mp3
 .wav
+/youtube_instrumentals/!audio/
