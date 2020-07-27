@@ -4,7 +4,7 @@ from datetime import datetime
 
 import PySimpleGUI as sg
 import youtube_dl
-from spleeter.separator import Separator
+# from spleeter.separator import Separator
 
 input_links = (
     ['https://www.youtube.com/watch?v=mu32phZdlZo', 'https://www.youtube.com/watch?v=VofkCG33xFs'], "stem2")
