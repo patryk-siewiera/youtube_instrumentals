@@ -3,7 +3,7 @@ import pprint
 import PySimpleGUI as sg
 import validators
 from youtube_dl import YoutubeDL
-from youtube_instrumentals.output import output__searching_results_PY
+# from youtube_instrumentals.output import output__searching_results_PY
 
 # TODO: separate gui and logic?
 
@@ -203,7 +203,7 @@ def info_current_item(data):
                 output_list = output_list + [checkbox_per_track(output, webpage_url_key)]
 
             except:
-                print("\t\t\n you cannot download tracks from radio / live stream... :( \n\n")
+                print("\t\t\n error... \n\n")
                 pass
 
     return output_list
@@ -270,13 +270,14 @@ def layout_generator(data):
          sg.Button('WAV', key="download_wav", size=button_size, button_color=button_color_download_only),
          sg.Button('MP3', key="download_mp3", size=button_size, button_color=button_color_download_only),
          sg.Button('WebM (without postprocessing)', key="download_webm", size=button_size,
-                   button_color=button_color_download_only)],
-        [sg.Text("Download and Separate:\t"),
-         sg.Button("Vocals / Accompaniment", key="stem2", size=button_size, button_color=button_color_spleeter),
-         sg.Button("Vocals / Drums / Bass / Other", key="stem4", size=button_size, button_color=button_color_spleeter),
-         sg.Button("Vocals / Drums / Bass / Piano / Other", key="stem5", size=button_size,
-                   button_color=button_color_spleeter)],
-    ]
+                   button_color=button_color_download_only)]]
+
+    added = [sg.Text("Download and Separate:\t"),
+             sg.Button("Vocals / Accompaniment", key="stem2", size=button_size, button_color=button_color_spleeter),
+             sg.Button("Vocals / Drums / Bass / Other", key="stem4", size=button_size,
+                       button_color=button_color_spleeter),
+             sg.Button("Vocals / Drums / Bass / Piano / Other", key="stem5", size=button_size,
+                       button_color=button_color_spleeter)],
 
     return outside_layout
 
@@ -348,5 +349,4 @@ def save_to_file(input_data):
     open(filename, "w", encoding="utf-8").write("output=" + output)
     return output
 
-
-print(create_window(output__searching_results_PY.output))
+# print(create_window(output__searching_results_PY.output))

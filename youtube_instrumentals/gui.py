@@ -33,7 +33,7 @@ THEME_COMBO = [
     'Black']
 
 # settings
-PROGRAM_TITLE = 'Youtube Instrumentals - v 0.1'
+PROGRAM_TITLE = 'Youtube Instrumentals - v 0.2'
 ICON_PATH = ""
 
 # for testing
