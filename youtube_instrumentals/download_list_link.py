@@ -1,9 +1,11 @@
 import pathlib
 import os
 from datetime import datetime
+from itertools import product
 
 import PySimpleGUI as sg
 import youtube_dl
+
 # from spleeter.separator import Separator
 
 input_links = (
