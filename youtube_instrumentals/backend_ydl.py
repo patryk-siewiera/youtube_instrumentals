@@ -13,7 +13,7 @@ YDL_SIMULATE_OPTS = {
 }
 
 
-def parse(gui_output):
+def parse(gui_output, youtube_dl = youtube_dl):
     parsed_list = []
     iterations = int(len(gui_output) / 3)
     for k in range(iterations):

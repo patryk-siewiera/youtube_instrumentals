@@ -373,7 +373,7 @@ def gui_10line(value, settings, event_list):
     return value, settings, event_list
 
 
-def main():
+def main(VALUES_START = VALUES_START):
     event = [None, 'one_line']
     window, settings = None, load_settings(SETTINGS_FILE, DEFAULT_SETTINGS)
     value, settings, event = gui_1line(VALUES_START, settings, event)
