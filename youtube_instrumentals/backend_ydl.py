@@ -5,7 +5,7 @@ import validators
 YDL_SIMULATE_OPTS = {
     # options for youtube_dl
     # simulate: true -> this will only gather information
-    'min_views': 10000,
+    'min_views': 1,
     'max_views': 10000000000000,
     'ignoreerrors': True,
     'simulate': True,

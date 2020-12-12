@@ -15,7 +15,7 @@ HORIZONTAL_VERTICAL_ELEMENTS_LIMIT = HORIZONTAL_ELEMENTS_SIZE * VERTICAL_ELEMENT
 YDL_OPTS = {
     # options for youtube_dl
     # simulate: true -> this will only gather information
-    'min_views': 10000,
+    'min_views': 1,
     'max_views': 10000000000000,
     'playlistend': 99,
     'ignoreerrors': True,

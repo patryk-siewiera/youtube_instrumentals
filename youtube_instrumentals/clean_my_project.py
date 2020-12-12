@@ -1,11 +1,21 @@
+import logging
 import os
 import shutil
 from pathlib import Path
+
+logging.basicConfig(filename="output/logs.txt", level=logging.DEBUG, format="%(asctime)s:  %(message)s")
 
 
 class OrganizeDownloadedFiles:
     """
     this is doctype for class -> ctrl + Q
+
+    Parameters:
+        create_new_folder (str) : this is test docstring
+        extensions_moved_to_new_folder (list) : all of extensions that should be moved out
+        remove_folder_and_content_inside (str) : remove this folder name
+    Returns:
+        action (str) : this is test returns
     """
 
     def __init__(self, create_new_folder, extensions_moved_to_new_folder, remove_folder_and_content_inside):
@@ -15,10 +25,9 @@ class OrganizeDownloadedFiles:
 
     def create_folder(self):
         """create folders specified in argument"""
-        print('\n_* def create_folder():  INPUT == ', self.create_fld, '\n')
+        logging.info('\n_* def create_folder():  INPUT == ', self.create_fld, '\n')
         if not os.path.exists(self.create_fld):
             os.makedirs(self.create_fld)
-
         return self.create_fld
 
     def move_files(self):
@@ -47,9 +56,10 @@ class OrganizeDownloadedFiles:
 
 # TODO: resume_here
 
-# removes all downloaded files + partly and undone
-organize = OrganizeDownloadedFiles('!delete', ['.part', '.ytdl', '.wav'], ['!delete', 'audio'])
-organize.create_folder()
-organize.move_files()
-organize.remove_delete_download()
-# OrganizeDownloadedFiles.remove_delete_download('audio')
+if __name__ == '__main__':
+    # removes all downloaded files + partly and undone
+    organize = OrganizeDownloadedFiles('!delete', ['.part', '.ytdl', '.wav'], '!delete')
+    # organize.create_folder()
+    # organize.move_files()
+    # organize.remove_delete_download()
+    # OrganizeDownloadedFiles()
