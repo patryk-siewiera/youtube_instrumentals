@@ -3,7 +3,7 @@ import pprint
 import PySimpleGUI as sg
 import validators
 from youtube_dl import YoutubeDL
-# from youtube_instrumentals.output import output__searching_results_PY
+    # from youtube_instrumentals.output import output__searching_results_PY
 
 # TODO: separate gui and logic?
 

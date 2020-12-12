@@ -1,6 +1,5 @@
-from youtube_instrumentals import gui, download_list_link, backend_ydl, searching_results, clean_my_project
+from youtube_instrumentals import gui, download_list_link, backend_ydl, searching_results
 
-# clean_my_project.main()
 
 if __name__ == '__main__':
     gui_output = gui.main()

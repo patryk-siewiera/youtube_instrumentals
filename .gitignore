@@ -142,3 +142,4 @@ dmypy.json
 .mp3
 .wav
 /youtube_instrumentals/!audio/
+/youtube_instrumentals/output/logs.txt
